@@ -1,8 +1,4 @@
-from customer import Customer
-from secretary import Secretary
-
-
-class User(Customer, Secretary):
+class User:
     def register(self):
         pass
 

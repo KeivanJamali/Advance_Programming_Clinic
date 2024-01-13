@@ -11,7 +11,6 @@ conn = psycopg2.connect(
 cursor = conn.cursor()
 
 cursor.execute("SELECT * FROM clinic")
-cursor.execute()
 
 rows = cursor.fetchall()
 
