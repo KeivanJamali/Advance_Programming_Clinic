@@ -1,11 +1,3 @@
-class User(Customer, Secretary):
-    def register(self):
-        pass
-
-    def login(self):
-        pass
-
-
 class Availability:
     def get_available_times(self):
         """search for available times"""
@@ -122,4 +114,12 @@ class Customer(Patient):
 
     def view_appointments_history(self):
         """show appointments history"""
+        pass
+
+
+class User(Customer, Secretary):
+    def register(self):
+        pass
+
+    def login(self):
         pass
