@@ -1,4 +1,4 @@
-from user import Patient
+from patient import Patient
 
 
 class Customer(Patient):

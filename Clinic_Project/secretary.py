@@ -1,4 +1,4 @@
-from user import Clinic
+from clinic import Clinic
 
 
 class Secretary(Clinic):
