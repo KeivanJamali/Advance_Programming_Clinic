@@ -1,4 +1,4 @@
-class Doctor:
+  class Doctor:
     def __init__(self):
         self.shifts = []
 
