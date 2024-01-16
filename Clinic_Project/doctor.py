@@ -1,14 +1,6 @@
-<<<<<<< Updated upstream
-from appointment import Appointment
-
-class Doctor(Appointment):
-    def add_doctor(self):
-        pass
-=======
-class Doctor:
+  class Doctor:
     def __init__(self):
-        self.appointments = []
->>>>>>> Stashed changes
+        self.shifts = []
 
     def update_doctor_info(self):
         pass
@@ -16,9 +8,6 @@ class Doctor:
     def view_doctor_schedule(self):
         pass
 
-    def remove_doctor(self):
-        pass
-
     def edit_appointments(self):
-        """can add, remove or edit appointments"""
+        """Can add, remove, or edit appointments"""
         pass

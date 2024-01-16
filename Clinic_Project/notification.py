@@ -1,8 +1,8 @@
 class Notification:
     def send_notification_successful(self):
-        """send notification"""
+        """Send successful notification"""
         pass
 
     def send_notification_unsuccessful(self):
-        """send notification"""
+        """Send unsuccessful notification"""
         pass

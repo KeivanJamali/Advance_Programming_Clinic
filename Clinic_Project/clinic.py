@@ -1,20 +1,21 @@
-from doctor import Doctor
-
-
-class Clinic(Doctor):
+class Clinic:
+    def __init__(self):
+        self.doctors = []
 
     def update_clinic_info(self):
-        """admin can update the clinic info"""
+        """Admin can update the clinic info"""
         pass
 
     def set_availability(self):
-        """admin can set the availability"""
+        """Admin can set the availability"""
         pass
 
-    def view_appointment(self):
-        """can see appointments"""
+    def view_appointments(self):
+        """Can see appointments"""
         pass
 
-    def edit_doctors(self):
-        """can add, remove, edit doctors"""
+    def add_doctor(self):
+        pass
+
+    def remove_doctor(self):
         pass

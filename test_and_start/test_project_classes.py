@@ -1,54 +1,71 @@
 class Availability:
     def get_available_times(self):
-        """search for available times"""
+        """Search for available times"""
         pass
 
     def check_date_availability(self):
-        """check if the date is available"""
+        """Check if the date is available"""
         pass
 
 
 class Notification:
     def send_notification_successful(self):
-        """send notification"""
+        """Send successful notification"""
         pass
 
     def send_notification_unsuccessful(self):
-        """send notification"""
+        """Send unsuccessful notification"""
         pass
 
 
 class Appointment(Availability, Notification):
     def add_appointment(self):
-        """get the proper date and schedule an appointment"""
+        """Get the proper date and schedule an appointment"""
         pass
 
     def cancel_appointment(self):
-        """cancel the appointment"""
+        """Cancel the appointment"""
         pass
 
     def reschedule_appointment(self):
-        """reschedule the appointment in another appropriate date"""
+        """Reschedule the appointment for another appropriate date"""
         pass
 
 
-class Patient(Appointment):
-    def add_patient(self):
-        """get the name of the patient and required field to add the patient to database"""
+class User:
+    def register(self):
         pass
 
-    def update_patient_info(self):
-        """update patient info"""
-        pass
-
-    def remove_patient(self):
-        """remove the patient from database"""
+    def login(self):
         pass
 
 
-class Doctor(Appointment):
+class Clinic:
+    def __init__(self):
+        self.doctors = []
+
+    def update_clinic_info(self):
+        """Admin can update the clinic info"""
+        pass
+
+    def set_availability(self):
+        """Admin can set the availability"""
+        pass
+
+    def view_appointments(self):
+        """Can see appointments"""
+        pass
+
     def add_doctor(self):
         pass
+
+    def remove_doctor(self):
+        pass
+
+
+class Doctor:
+    def __init__(self):
+        self.shifts = []
 
     def update_doctor_info(self):
         pass
@@ -56,70 +73,69 @@ class Doctor(Appointment):
     def view_doctor_schedule(self):
         pass
 
-    def remove_doctor(self):
-        pass
-
     def edit_appointments(self):
-        """can add, remove or edit appointments"""
+        """Can add, remove, or edit appointments"""
         pass
 
 
-class Clinic(Doctor):
+class Patient:
+    def __init__(self):
+        self.appointments = []
 
-    def update_clinic_info(self):
-        """admin can update the clinic info"""
+    def add_patient(self):
+        """Get the name of the patient and required fields to add the patient to the database"""
         pass
 
-    def set_availability(self):
-        """admin can set the availability"""
+    def update_patient_info(self):
+        """Update patient info"""
         pass
 
-    def view_appointment(self):
-        """can see appointments"""
-        pass
-
-    def edit_doctors(self):
-        """can add, remove, edit doctors"""
-        pass
-
-
-class Secretary(Clinic):
-    def update_profile(self):
-        """update customer profile"""
-        pass
-
-    def add_clinic(self):
-        """a new clinic can be added by admin user"""
-        pass
-
-    def update_clinic(self):
-        """here the secretary can connect to specific clinic and change the clinic...
-        it can have more than one clinic too."""
-        pass
-
-
-class Customer(Patient):
-
-    def update_profile(self):
-        """update customer profile"""
-        pass
-
-    def edit_appointments(self):
-        """add, remove or edit appointments"""
+    def remove_patient(self):
+        """Remove the patient from the database"""
         pass
 
     def view_current_appointments(self):
-        """show current appointments"""
+        """Show current appointments"""
         pass
 
     def view_appointments_history(self):
-        """show appointments history"""
+        """Show appointment history"""
         pass
 
 
-class User(Customer, Secretary):
-    def register(self):
+class Secretary:
+    def __init__(self):
+        self.clinics = []
+
+    def update_profile(self):
+        """Update customer profile"""
         pass
 
-    def login(self):
+    def add_clinic(self):
+        """Add a new clinic (admin-only)"""
         pass
+
+    def update_clinic(self):
+        """Connect to a specific clinic and change its details (admin-only)"""
+        pass
+
+
+class Customer(Patient, Secretary):
+    def edit_appointments(self):
+        """Add, remove, or edit appointments"""
+        pass
+
+
+# Example usage
+user = User()
+user.register()
+
+clinic = Clinic()
+clinic.add_doctor()
+
+patient = Patient()
+patient.add_patient()
+patient.add_appointment()
+
+doctor = Doctor()
+doctor.view_doctor_schedule()
