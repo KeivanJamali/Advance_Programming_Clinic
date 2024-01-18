@@ -1,8 +1,24 @@
 import mysql.connector
+import datetime
+
 
 class Availability:
-    def add_availability(self, doctor_phone_number, clinic, date):
-        """Add availability"""
+    def add_availability(self, doctor_phone_number, clinic, date, time):
+        """
+        Adds availability for a doctor at a specific clinic on a given date and time.
+
+        Args:
+            doctor_phone_number (str): The phone number of the doctor(11 digits).
+            clinic (str): The name of the clinic.
+            date (str): The date of availability(yyyy/mm/dd).
+            time (str): The time of availability(hh:mm).
+
+        Returns:
+            None
+
+        Raises:
+            None
+        """
         connection = mysql.connector.connect(
             host="localhost",
             port="3306",
@@ -41,8 +57,9 @@ class Availability:
         WHERE doctor_id = %s
         AND clinic_id = %s
         AND available_date = %s
+        AND available_time = %s
         """
-        params = (doctor_id, clinic_id, date)
+        params = (doctor_id, clinic_id, date, time)
         cursor.execute(query, params)
         result = cursor.fetchone()
         if result is not None:
@@ -53,8 +70,8 @@ class Availability:
 
         # Step 4: Insert a new row into the availability_table
         cursor.fetchall()
-        query = "INSERT INTO availability_table (doctor_id, clinic_id, available_date, reserved) VALUES (%s, %s, %s, %s)"
-        params = (doctor_id, clinic_id, date, False)
+        query = "INSERT INTO availability_table (doctor_id, clinic_id, available_date,available_time, reserved) VALUES (%s, %s, %s, %s, %s)"
+        params = (doctor_id, clinic_id, date, time, False)
         cursor.execute(query, params)
         connection.commit()
 
@@ -62,9 +79,50 @@ class Availability:
         connection.close()
 
     def get_available_times(self):
-        """Search for available times"""
-        pass
+        """
+        Retrieves the available times for appointments from the database.
 
-    def check_date_availability(self):
-        """Check if the date is available"""
-        pass
+        :return: A list of dictionaries containing the available dates, times, doctor names, clinic names, clinic addresses, and secretary phone numbers.
+        :rtype: list[dict]
+        """
+        connection = mysql.connector.connect(
+            host="localhost",
+            port="3306",
+            user="root",
+            password="1234",
+            database="clinic_data",
+            buffered=True
+        )
+
+        cursor = connection.cursor()
+
+        query = """
+        SELECT a.available_date, a.available_time, d.first_name, d.last_name, c.clinic_name, c.address, c.secretary_phone_number
+        FROM availability_table a
+        JOIN doctor_table d ON a.doctor_id = d.doctor_id
+        JOIN clinic_table c ON a.clinic_id = c.clinic_id
+        WHERE a.reserved = FALSE
+        """
+
+        cursor.execute(query)
+        results = cursor.fetchall()
+
+        available_times = []
+        for result in results:
+            available_date, available_time, first_name, last_name, clinic_name, address, secretary_phone_number = result
+            formatted_date = available_date.strftime("%Y/%m/%d")
+            formatted_time = datetime.datetime(1, 1, 1) + available_time
+            formatted_time = formatted_time.strftime("%H:%M")
+            available_times.append({
+                "Available Date": formatted_date,
+                "Available Time": formatted_time,
+                "Doctor Name": first_name + " " + last_name,
+                "Clinic Name": clinic_name,
+                "Clinic Address": address,
+                "Secretary Phone Number": secretary_phone_number
+            })
+
+        cursor.close()
+        connection.close()
+
+        return available_times
