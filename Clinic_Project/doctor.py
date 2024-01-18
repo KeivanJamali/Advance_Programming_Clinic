@@ -147,8 +147,8 @@ class Doctor:
 
         Returns:
             list: A list of dictionaries containing the details of each appointment. Each dictionary has the following keys:
-                - date (str): The formatted date of the appointment (YYYY/MM/DD).
-                - time (str): The formatted time of the appointment (HH:MM).
+                - date (str): The formatted date of the appointment(YYYY/MM/DD).
+                - time (str): The formatted time of the appointment(HH:MM).
                 - clinic (str): The name of the clinic where the appointment is scheduled.
                 - patient_name (str): The full name of the patient.
                 - patient_phone_number (str): The phone number of the patient.
