@@ -1,7 +1,4 @@
 class Secretary:
-    def __init__(self):
-        self.clinics = []
-
     def update_profile(self):
         """Update customer profile"""
         pass

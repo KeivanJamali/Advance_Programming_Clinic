@@ -1,7 +1,4 @@
-  class Doctor:
-    def __init__(self):
-        self.shifts = []
-
+class Doctor:
     def update_doctor_info(self):
         pass
 
