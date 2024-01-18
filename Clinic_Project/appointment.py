@@ -1,11 +1,11 @@
 from availability import Availability
 from notification import Notification
-import mysql.connector
+from DATABASE import establish_connection
 
 
 class Appointment(Availability, Notification):
     def add_appointment(self, doctor_phone_number: str, clinic_name: str, patient_phone_number: str, date: str,
-                        time: str):
+                        time: str) -> None:
         """
         Adds an appointment to the clinic's calendar.
 
@@ -22,15 +22,7 @@ class Appointment(Availability, Notification):
         Raises:
             None
         """
-        connection = mysql.connector.connect(
-            host="localhost",
-            port="3306",
-            user="root",
-            password="1234",
-            database="clinic_data",
-            buffered=True
-        )
-
+        connection = establish_connection()
         cursor = connection.cursor()
 
         # Step 1: Find the patient_id based on the patient's phone number
@@ -39,7 +31,7 @@ class Appointment(Availability, Notification):
         cursor.execute(query, params)
         result = cursor.fetchone()
         if result is None:
-            print("[ERROR] Patient not found")
+            print("[Wrong] Patient not found")
             cursor.close()
             connection.close()
             return
@@ -51,7 +43,7 @@ class Appointment(Availability, Notification):
         cursor.execute(query, params)
         result = cursor.fetchone()
         if result is None:
-            print("[ERROR] Doctor not found")
+            print("[Wrong] Doctor not found")
             cursor.close()
             connection.close()
             return
@@ -70,7 +62,7 @@ class Appointment(Availability, Notification):
         cursor.execute(query, params)
         result = cursor.fetchone()
         if result is None:
-            print("[ERROR] Doctor is not available on the given date")
+            print("[Wrong] Doctor is not available on the given date")
             cursor.close()
             connection.close()
             return
@@ -83,7 +75,7 @@ class Appointment(Availability, Notification):
         cursor.execute(query, params)
         result = cursor.fetchone()
         if result is None:
-            print("[ERROR] Clinic not found")
+            print("[Wrong] Clinic not found")
             cursor.close()
             connection.close()
             return
@@ -101,7 +93,7 @@ class Appointment(Availability, Notification):
         cursor.execute(query, params)
         result = cursor.fetchone()
         if result is None:
-            print("[ERROR] Clinic is not available on the given date")
+            print("[Wrong] Clinic is not available on the given date")
             cursor.close()
             connection.close()
             return
@@ -123,7 +115,7 @@ class Appointment(Availability, Notification):
         cursor.close()
         connection.close()
 
-    def cancel_appointment(self, patient_phone_number: str, date: str, time: str):
+    def cancel_appointment(self, patient_phone_number: str, date: str, time: str) -> None:
         """
         Cancels an appointment based on the patient's phone number, date, and time.
 
@@ -135,15 +127,7 @@ class Appointment(Availability, Notification):
         Returns:
             None
         """
-        connection = mysql.connector.connect(
-            host="localhost",
-            port="3306",
-            user="root",
-            password="1234",
-            database="clinic_data",
-            buffered=True
-        )
-
+        connection = establish_connection()
         cursor = connection.cursor()
 
         # Step 1: Find the patient_id based on the phone number
@@ -152,7 +136,7 @@ class Appointment(Availability, Notification):
         cursor.execute(query, params)
         result = cursor.fetchone()
         if result is None:
-            print("[ERROR] Patient not found")
+            print("[Wrong] Patient not found")
             cursor.close()
             connection.close()
             return
@@ -171,7 +155,7 @@ class Appointment(Availability, Notification):
         cursor.execute(query, params)
         result = cursor.fetchone()
         if result is None:
-            print("[ERROR] Appointment not found")
+            print("[Wrong] Appointment not found")
             cursor.close()
             connection.close()
             return
@@ -198,7 +182,7 @@ class Appointment(Availability, Notification):
         cursor.execute(query, params)
         result = cursor.fetchone()
         if result is None:
-            print("[ERROR] something unusual happened")
+            print("[Wrong] something unusual happened")
             cursor.close()
             connection.close()
             return
@@ -214,7 +198,8 @@ class Appointment(Availability, Notification):
         cursor.close()
         connection.close()
 
-    def reschedule_appointment(self, patient_phone_number:str, old_date:str, old_time:str, new_date:str, new_time:str):
+    def reschedule_appointment(self, patient_phone_number: str, old_date: str, old_time: str, new_date: str,
+                               new_time: str) -> None:
         """
         Reschedules an appointment for a patient.
 
@@ -230,15 +215,7 @@ class Appointment(Availability, Notification):
         Raises:
             None.
         """
-        connection = mysql.connector.connect(
-            host="localhost",
-            port="3306",
-            user="root",
-            password="1234",
-            database="clinic_data",
-            buffered=True
-        )
-
+        connection = establish_connection()
         cursor = connection.cursor()
 
         # Step 1: Find the patient_id based on the phone number
@@ -247,7 +224,7 @@ class Appointment(Availability, Notification):
         cursor.execute(query, params)
         result = cursor.fetchone()
         if result is None:
-            print("[ERROR] Patient not found")
+            print("[Wrong] Patient not found")
             cursor.close()
             connection.close()
             return
@@ -266,7 +243,7 @@ class Appointment(Availability, Notification):
         cursor.execute(query, params)
         result = cursor.fetchone()
         if result is None:
-            print("[ERROR] Appointment not found")
+            print("[Wrong] Appointment not found")
             cursor.close()
             connection.close()
             return
@@ -287,7 +264,7 @@ class Appointment(Availability, Notification):
         cursor.execute(query, params)
         result = cursor.fetchone()
         if result is None:
-            print("[ERROR] New date not available with the same doctor and clinic")
+            print("[INFO] New date not available with the same doctor and clinic")
             cursor.close()
             connection.close()
             return
@@ -308,7 +285,7 @@ class Appointment(Availability, Notification):
         cursor.execute(query, params)
         result = cursor.fetchone()
         if result is None:
-            print("[ERROR] Old date not available")
+            print("[Wrong] Old date not available")
             cursor.close()
             connection.close()
             return
