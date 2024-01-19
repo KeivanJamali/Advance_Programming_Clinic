@@ -1,14 +1,27 @@
 from DATABASE import establish_connection
 import datetime
 
+
 class Patient:
-    def __init__(self):
+    def __init__(self, phone_number):
         # Initialize patient attributes
         self.patient_id = None
         self.first_name = None
         self.last_name = None
-        self.phone_number = None
+        self.phone_number = phone_number
         self.appointments = []
+
+        connection = establish_connection()
+        cursor = connection.cursor()
+
+        # Check if the patient with the provided phone number already exists
+        query = "SELECT * FROM patient_table WHERE phone_number = %s"
+        cursor.execute(query, (self.phone_number,))
+        existing_patient = cursor.fetchone()
+
+        if existing_patient:
+            # If patient exists, set attributes based on existing data
+            self.patient_id, self.first_name, self.last_name, self.phone_number = existing_patient
 
     def add_patient(self, first_name, last_name, phone_number):
         """
@@ -33,7 +46,6 @@ class Patient:
         if existing_patient:
             # If patient exists, set attributes based on existing data
             print("[INFO] Patient with the provided phone number already exists.")
-            self.patient_id, self.first_name, self.last_name, self.phone_number = existing_patient
         else:
             # Insert new patient if not already exists
             insert_query = "INSERT INTO patient_table (first_name, last_name, phone_number) VALUES (%s, %s, %s)"
