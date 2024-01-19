@@ -3,6 +3,7 @@ import datetime
 
 class Patient:
     def __init__(self):
+        # Initialize patient attributes
         self.patient_id = None
         self.first_name = None
         self.last_name = None
@@ -30,6 +31,7 @@ class Patient:
         existing_patient = cursor.fetchone()
 
         if existing_patient:
+            # If patient exists, set attributes based on existing data
             print("[INFO] Patient with the provided phone number already exists.")
             self.patient_id, self.first_name, self.last_name, self.phone_number = existing_patient
         else:
@@ -64,17 +66,20 @@ class Patient:
         connection = establish_connection()
         cursor = connection.cursor()
 
+        # Check if a patient with the new phone number already exists
         existing_patient_query = "SELECT * FROM patient_table WHERE phone_number = %s"
         cursor.execute(existing_patient_query, (new_phone_number,))
         existing_patient = cursor.fetchone()
 
         if existing_patient:
+            # If patient with the new phone number already exists, do not update
             print("[INFO] A patient with the provided phone number already exists.")
             return
 
         update_fields = []
         values = []
 
+        # Build the update query based on provided new information
         if new_first_name:
             update_fields.append("first_name = %s")
             values.append(new_first_name)
@@ -86,6 +91,7 @@ class Patient:
             values.append(new_phone_number)
 
         if not update_fields:
+            # If no fields provided for update, print info and return
             print("[INFO] No fields provided for update.")
             return
 
@@ -94,6 +100,7 @@ class Patient:
         set_clause = ", ".join(update_fields)
         query = f"UPDATE patient_table SET {set_clause} WHERE phone_number = %s"
 
+        # Execute the update query
         cursor.execute(query, values)
         rows_affected = cursor.rowcount
         connection.commit()
@@ -102,8 +109,10 @@ class Patient:
         connection.close()
 
         if rows_affected == 0:
+            # If no patient with the provided phone number exists, print info
             print("[INFO] No patient with the provided phone number exists.")
         else:
+            # If update successful, print info and update attributes
             print("[INFO] Patient profile updated successfully.")
             if new_first_name:
                 self.first_name = new_first_name
@@ -122,6 +131,7 @@ class Patient:
         connection = establish_connection()
         cursor = connection.cursor()
 
+        # Execute the delete query
         delete_query = "DELETE FROM patient_table WHERE patient_id = %s"
         cursor.execute(delete_query, (self.patient_id,))
 
@@ -142,6 +152,7 @@ class Patient:
         connection = establish_connection()
         cursor = connection.cursor()
 
+        # Query to retrieve current appointments for the patient
         query = """
         SELECT a.appointment_date, a.appointment_time, d.first_name, d.last_name, c.clinic_name
         FROM calendar_table a
@@ -155,11 +166,13 @@ class Patient:
         appointments = cursor.fetchall()
 
         if not appointments:
+            # If no current appointments, print info and return
             print("[INFO] No current appointments for the patient.")
             return
 
         current_appointments = []
         for appointment in appointments:
+            # Format appointment data and append to current_appointments list
             date, time, doctor_first_name, doctor_last_name, clinic_name = appointment
             formatted_date = date.strftime("%Y/%m/%d")
             formatted_time = datetime.datetime(1, 1, 1) + time
@@ -189,6 +202,7 @@ class Patient:
         connection = establish_connection()
         cursor = connection.cursor()
 
+        # Query to retrieve appointment history for the patient
         query = """
         SELECT a.appointment_date, a.appointment_time, d.first_name, d.last_name, c.clinic_name
         FROM calendar_table a
@@ -202,11 +216,13 @@ class Patient:
         appointments = cursor.fetchall()
 
         if not appointments:
+            # If no appointment history, print info and return
             print("[INFO] No appointment history for the patient.")
             return
 
         appointments_history = []
         for appointment in appointments:
+            # Format appointment data and append to appointments_history list
             date, time, doctor_first_name, doctor_last_name, clinic_name = appointment
             formatted_date = date.strftime("%Y/%m/%d")
             formatted_time = datetime.datetime(1, 1, 1) + time
