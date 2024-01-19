@@ -3,31 +3,32 @@ from secretary import Secretary
 from appointment import Appointment
 
 class Customer:
-    def __init__(self):
+    def __init__(self, phone_number: str):
         # Initialize instances of Patient, Secretary, and Appointment classes
-        self.patient = Patient()
-        self.secretary = Secretary()
+
+        self.patient = Patient(phone_number)
+        #self.secretary = Secretary()
         self.appointment = Appointment()
 
     def add_patient(self, first_name, last_name, phone_number):
         # Delegate the add_patient functionality to the Patient class
         self.patient.add_patient(first_name, last_name, phone_number)
 
-    def update_patient_info(self, patient_id, new_first_name=None, new_last_name=None, new_phone_number=None):
+    def update_patient_info(self, new_first_name=None, new_last_name=None, new_phone_number=None):
         # Delegate the update_patient_info functionality to the Patient class
-        self.patient.update_patient_info(patient_id, new_first_name, new_last_name, new_phone_number)
+        self.patient.update_patient_info(new_phone_number, new_first_name, new_last_name)
 
-    def remove_patient(self, patient_id):
+    def remove_patient(self):
         # Delegate the remove_patient functionality to the Patient class
-        self.patient.remove_patient(patient_id)
+        self.patient.remove_patient()
 
-    def view_current_appointments(self, patient_id):
+    def view_current_appointments(self):
         # Delegate the view_current_appointments functionality to the Patient class
-        return self.patient.view_current_appointments(patient_id)
+        return self.patient.view_current_appointments()
 
-    def view_appointments_history(self, patient_id):
+    def view_appointments_history(self):
         # Delegate the view_appointments_history functionality to the Patient class
-        return self.patient.view_appointments_history(patient_id)
+        return self.patient.view_appointments_history()
 
     def add_appointment(self, doctor_phone_number, clinic_name, patient_phone_number, date, time):
         # Delegate the add_appointment functionality to the Appointment class
