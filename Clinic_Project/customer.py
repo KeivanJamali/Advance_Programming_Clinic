@@ -5,23 +5,37 @@ from appointment import Appointment
 class Customer:
     def __init__(self, phone_number: str):
         # Initialize instances of Patient, Secretary, and Appointment classes
-
         self.patient = Patient(phone_number)
-        #self.secretary = Secretary()
+        # self.secretary = Secretary()
         self.appointment = Appointment()
 
-    def add_patient(self, first_name, last_name, phone_number):
+    def add_patient(self, first_name, last_name, phone_number, birthdate, international_code, email):
         # Delegate the add_patient functionality to the Patient class
-        self.patient.add_patient(first_name, last_name, phone_number)
+        self.patient.add_patient(first_name, last_name, phone_number, birthdate, international_code, email)
 
-    def update_patient_info(self, new_first_name=None, new_last_name=None, new_phone_number=None):
+    def update_patient_info(self, new_phone_number=None, new_first_name=None, new_last_name=None,
+                            new_email=None, new_birthday=None, new_international_code=None):
         # Delegate the update_patient_info functionality to the Patient class
-        self.patient.update_patient_info(new_phone_number, new_first_name, new_last_name)
+        self.patient.update_patient_info(new_phone_number, new_first_name, new_last_name, new_email, new_birthday, new_international_code)
 
-    def remove_patient(self):
-        # Delegate the remove_patient functionality to the Patient class
-        self.patient.remove_patient()
+    def remove_patient(self, user_phone):
+        # Check if the user_phone and phone_number exist in the user_patient table
+        connection = establish_connection()
+        cursor = connection.cursor()
 
+        query = "SELECT * FROM user_patient WHERE user_phone = %s AND phone_number = %s"
+        cursor.execute(query, (user_phone, self.patient.phone_number))
+        user_patient_entry = cursor.fetchone()
+
+        if user_patient_entry:
+            # If entry exists, delegate the remove_patient functionality to the Patient class
+            self.patient.remove_patient()
+        else:
+            # If entry doesn't exist, print an error message
+            print("[ERROR] User not authorized to remove the patient.")
+
+        cursor.close()
+        connection.close()
     def view_current_appointments(self):
         # Delegate the view_current_appointments functionality to the Patient class
         return self.patient.view_current_appointments()
@@ -41,29 +55,3 @@ class Customer:
     def reschedule_appointment(self, patient_phone_number, old_date, old_time, new_date, new_time):
         # Delegate the reschedule_appointment functionality to the Appointment class
         self.appointment.reschedule_appointment(patient_phone_number, old_date, old_time, new_date, new_time)
-
-    # def edit_appointments(self, action, appointment_details):
-    #     """
-    #     Add, remove, or edit appointments.
-    #
-    #     Parameters:
-    #         action (str): Action to perform ('add', 'remove', 'edit').
-    #         appointment_details (dict): Details of the appointment.
-    #
-    #     Returns:
-    #         None
-    #     """
-    #     if action == 'add':
-    #         # Delegate the add_appointment functionality to the Appointment class
-    #         self.appointment.add_appointment(**appointment_details)
-    #
-    #     elif action == 'remove':
-    #         # Delegate the remove_appointment functionality to the Appointment class
-    #         self.appointment.cancel_appointment(**appointment_details)
-    #
-    #     elif action == 'edit':
-    #         # Delegate the edit_appointment functionality to the Appointment class
-    #         self.appointment.reschedule_appointment(**appointment_details)
-    #
-    #     else:
-    #         print("[Wrong] Invalid action. Please choose 'add', 'remove', or 'edit'.")
