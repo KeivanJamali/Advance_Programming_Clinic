@@ -73,3 +73,20 @@ class Notification:
         print(
             f"Clinic {clinic.clinic_name}" + f"Address: {clinic.address}" + f"Secretary Phone Number: {clinic.secretary_phone_number}")
         print(tabulate(data, headers=headers, tablefmt="fancy_grid", showindex="always", numalign="center"))
+
+    def make_table_current_appointment(self,patient ,current_appointments):
+        data = []
+        for row in current_appointments:
+            sub = [row["Date"], row["Time"], row["Doctor Name"], row["Clinic Name"]]
+            data.append(sub)
+
+        headers = ["Date", "Time", "Doctor Name", "Clinic Name"]
+        print(f"Patient: {patient.first_name} {patient.last_name} | phone number: {patient.phone_number}")
+        print(tabulate(data, headers=headers, tablefmt="fancy_grid", numalign="center"))
+
+    def make_table_appointment(self,patient ,appointments_history):
+        headers = ["Date", "Time", "Doctor Name", "Clinic Name"]
+        print(f"Patient: {patient.first_name} {patient.last_name} | phone number: {patient.phone_number}")
+        print(tabulate(appointments_history, headers=headers, tablefmt="fancy_grid", numalign="center"))
+
+
