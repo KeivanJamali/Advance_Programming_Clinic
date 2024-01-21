@@ -1,45 +1,34 @@
 from DATABASE import establish_connection
 import datetime
-import tabulate
+from tabulate import tabulate
+from notification import Notification
 
-
-class Patient:
-    def __init__(self, phone_number):
+class Patient(Notification):
+    def __init__(self):
         # Initialize patient attributes
+        super().__init__()
         self.patient_id = None
         self.first_name = None
         self.last_name = None
-        self.phone_number = phone_number
+        self.phone_number = None
+        self.birth_date = None
+        self.national_code = None
+        self.email = None
         self.appointments = []
 
-        connection = establish_connection()
-        cursor = connection.cursor()
+        # connection = establish_connection()
+        # cursor = connection.cursor()
+        #
+        # # Check if the patient with the provided phone number already exists
+        # query = "SELECT * FROM patient_table WHERE phone_number = %s"
+        # cursor.execute(query, (self.phone_number,))
+        # existing_patient = cursor.fetchone()
+        #
+        # if existing_patient:
+        #     # If patient exists, set attributes based on existing data
+        #     self.patient_id, self.phone_number, self.first_name, self.last_name, _, _, _ = existing_patient
 
-        # Check if the patient with the provided phone number already exists
-        query = "SELECT * FROM patient_table WHERE phone_number = %s"
-        cursor.execute(query, (self.phone_number,))
-        existing_patient = cursor.fetchone()
-
-        if existing_patient:
-            # If patient exists, set attributes based on existing data
-            self.patient_id, self.phone_number, self.last_name, self.first_name = existing_patient
-
-    def add_patient(self, first_name, last_name, phone_number, birthdate, international_code, email, user_phone):
-        """
-        Add a new patient to the database.
-
-        Parameters:
-            first_name (str): The first name of the patient.
-            last_name (str): The last name of the patient.
-            phone_number (str): The phone number of the patient.
-            birthdate (str): The birthdate of the patient.
-            international_code (str): The international code of the patient.
-            email (str): The email address of the patient.
-            user_phone (str): The user's phone number.
-
-        Returns:
-            None
-        """
+    def select_patient(self, phone_number):
         connection = establish_connection()
         cursor = connection.cursor()
 
@@ -51,42 +40,82 @@ class Patient:
 
             if existing_patient:
                 # If patient exists, set attributes based on existing data
-                self.patient_id, self.first_name, self.last_name, _, _, _ = existing_patient
-                print("[INFO] Patient with the provided phone number already exists.")
-            else:
-                # Insert new patient if not already exists
-                insert_patient_query = """
-                    INSERT INTO patient_table (first_name, last_name, phone_number, birthdate, international_code, email)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                """
-                patient_values = (first_name, last_name, phone_number, birthdate, international_code, email)
-                cursor.execute(insert_patient_query, patient_values)
+                self.patient_id,self.phone_number, self.first_name, self.last_name, self.birth_date, self.national_code, self.email = existing_patient
+                print("[INFO] Successfully selected patient")
+        except Exception:
+            print("[ERROR] Invalid phone number.")
 
-                # Get patient_id
-                query_patient_id = "SELECT patient_id FROM patient_table WHERE phone_number = %s"
+    def add_patient(self, first_name, last_name, phone_number,birthdate, national_code, email, user_phone):
+        """
+        Add a new patient to the database.
+
+        Parameters:
+            first_name (str): The first name of the patient.
+            last_name (str): The last name of the patient.
+            phone_number (str): The phone number of the patient.
+            birthdate (str): The birthdate of the patient.
+            national_code (str): The national code of the patient.
+            email (str): The email address of the patient.
+            user_phone (str): The user's phone number.
+
+        Returns:
+            None
+        """
+        connection = establish_connection()
+        cursor = connection.cursor()
+
+
+        # Check if the patient with the provided phone number already exists
+        query_patient = "SELECT * FROM patient_table WHERE phone_number = %s"
+        cursor.execute(query_patient, (phone_number,))
+        existing_patient = cursor.fetchone()
+
+        if existing_patient:
+            # If patient exists, set attributes based on existing data
+            self.patient_id, self.phone_number, self.first_name, self.last_name, self.birth_date, self.national_code, self.email = existing_patient
+            print("[INFO] Patient with the provided phone number already exists.")
+        else:
+            # Insert new patient if not already exists
+            insert_patient_query = """
+                INSERT INTO patient_table (first_name, last_name, phone_number, birthdate, national_code, email)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """
+            patient_values = (first_name, last_name, phone_number, birthdate, national_code, email)
+            cursor.execute(insert_patient_query, patient_values)
+
+
+            # Get patient_id
+            try:
+                query_patient_id = "SELECT * FROM patient_table WHERE phone_number = %s"
                 cursor.execute(query_patient_id, (phone_number,))
-                self.patient_id = cursor.fetchone()[0]
+                # self.patient_id = cursor.fetchone()[0]
+                self.patient_id, self.phone_number, self.first_name, self.last_name, self.birth_date, self.national_code, self.email = cursor.fetchone()
+                query = """SELECT user_id FROM user_table WHERE phone_number = %s"""
+                values = (user_phone,)
+                cursor.execute(query,values)
+                user_id = cursor.fetchone()[0]
+            except:
+                print("[ERROR] user does not exist.")
+                return
 
-                # Insert into user_patient table
-                insert_user_patient_query = """
-                    INSERT INTO user_patient (user_phone, phone_number)
-                    VALUES (%s, %s)
-                """
-                user_patient_values = (user_phone, phone_number)
-                cursor.execute(insert_user_patient_query, user_patient_values)
+            # Insert into user_patient table
+            insert_user_patient_query = """
+                INSERT INTO customer_patient (user_id, patient_id)
+                VALUES (%s, %s)
+            """
+            user_patient_values = (user_id, self.patient_id)
+            cursor.execute(insert_user_patient_query, user_patient_values)
 
-                connection.commit()
-                print("[INFO] Patient added successfully.")
+            connection.commit()
+            print("[INFO] Patient added successfully.")
 
-        except Exception as e:
-            print(f"[ERROR] An error occurred: {e}")
 
-        finally:
-            cursor.close()
-            connection.close()
+
+        cursor.close()
+        connection.close()
 
     def update_patient_info(self, new_phone_number=None, new_first_name=None, new_last_name=None, new_birthdate=None,
-                            new_email=None, new_international_code=None):
+                            new_email=None, new_national_code=None):
         """
         Update the patient's information in the database.
 
@@ -95,7 +124,7 @@ class Patient:
             new_last_name (str): The new last name of the patient. Default is None.
             new_phone_number (str): The new phone number of the patient. Default is None.
             new_email (str): The new email of the patient. Default is None.
-            new_international_code (str): The new international code of the patient. Default is None.
+            new_national_code (str): The new national code of the patient. Default is None.
 
         Returns:
             None
@@ -128,9 +157,9 @@ class Patient:
             values.append(new_last_name)
         if new_birthdate:
             update_fields.append("birthdate = %s")
-        if new_international_code:
-            update_fields.append("international_code = %s")
-            values.append(new_international_code)
+        if new_national_code:
+            update_fields.append("national_code = %s")
+            values.append(new_national_code)
         if new_email:
             update_fields.append("email = %s")
             values.append(new_email)
@@ -189,11 +218,11 @@ class Patient:
 
     def view_current_appointments(self):
         """
-            Show the current appointments for the patient.
+        Show the current appointments for the patient.
 
-            Returns:
-                None
-            """
+        Returns:
+            None
+        """
         connection = establish_connection()
         cursor = connection.cursor()
 
@@ -205,7 +234,7 @@ class Patient:
             JOIN clinic_table c ON a.clinic_id = c.clinic_id
             WHERE a.patient_id = %s AND a.appointment_date >= %s
             ORDER BY a.appointment_date, a.appointment_time
-            """
+        """
         current_date = datetime.date.today()
         cursor.execute(query, (self.patient_id, current_date))
         appointments = cursor.fetchall()
@@ -229,13 +258,9 @@ class Patient:
                 "Doctor Name": f"{doctor_first_name} {doctor_last_name}",
                 "Clinic Name": clinic_name
             })
-
         cursor.close()
         connection.close()
-
-        # Print the current appointments using tabulate
-        headers = ["Date", "Time", "Doctor Name", "Clinic Name"]
-        print(tabulate(current_appointments, headers=headers, tablefmt="fancy_grid", numalign="center"))
+        self.make_table_current_appointment(self ,current_appointments)
 
     def view_appointments_history(self):
         """
@@ -283,6 +308,7 @@ class Patient:
         cursor.close()
         connection.close()
 
+
+
         # Print the appointment history using tabulate
-        headers = ["Date", "Time", "Doctor Name", "Clinic Name"]
-        print(tabulate(appointments_history, headers=headers, tablefmt="fancy_grid", numalign="center"))
+        self.make_table_appointment(appointments_history)
