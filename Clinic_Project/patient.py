@@ -1,7 +1,7 @@
 from DATABASE import establish_connection
 import datetime
-from tabulate import tabulate
 from notification import Notification
+
 
 class Patient(Notification):
     def __init__(self):
@@ -16,17 +16,6 @@ class Patient(Notification):
         self.email = None
         self.appointments = []
 
-        # connection = establish_connection()
-        # cursor = connection.cursor()
-        #
-        # # Check if the patient with the provided phone number already exists
-        # query = "SELECT * FROM patient_table WHERE phone_number = %s"
-        # cursor.execute(query, (self.phone_number,))
-        # existing_patient = cursor.fetchone()
-        #
-        # if existing_patient:
-        #     # If patient exists, set attributes based on existing data
-        #     self.patient_id, self.phone_number, self.first_name, self.last_name, _, _, _ = existing_patient
 
     def select_patient(self, phone_number):
         connection = establish_connection()
@@ -40,12 +29,12 @@ class Patient(Notification):
 
             if existing_patient:
                 # If patient exists, set attributes based on existing data
-                self.patient_id,self.phone_number, self.first_name, self.last_name, self.birth_date, self.national_code, self.email = existing_patient
+                self.patient_id, self.phone_number, self.first_name, self.last_name, self.birth_date, self.national_code, self.email = existing_patient
                 print("[INFO] Successfully selected patient")
         except Exception:
             print("[ERROR] Invalid phone number.")
 
-    def add_patient(self, first_name, last_name, phone_number,birthdate, national_code, email, user_phone):
+    def add_patient(self, first_name, last_name, phone_number, birthdate, national_code, email, user_phone):
         """
         Add a new patient to the database.
 
@@ -63,7 +52,6 @@ class Patient(Notification):
         """
         connection = establish_connection()
         cursor = connection.cursor()
-
 
         # Check if the patient with the provided phone number already exists
         query_patient = "SELECT * FROM patient_table WHERE phone_number = %s"
@@ -83,7 +71,6 @@ class Patient(Notification):
             patient_values = (first_name, last_name, phone_number, birthdate, national_code, email)
             cursor.execute(insert_patient_query, patient_values)
 
-
             # Get patient_id
             try:
                 query_patient_id = "SELECT * FROM patient_table WHERE phone_number = %s"
@@ -92,7 +79,7 @@ class Patient(Notification):
                 self.patient_id, self.phone_number, self.first_name, self.last_name, self.birth_date, self.national_code, self.email = cursor.fetchone()
                 query = """SELECT user_id FROM user_table WHERE phone_number = %s"""
                 values = (user_phone,)
-                cursor.execute(query,values)
+                cursor.execute(query, values)
                 user_id = cursor.fetchone()[0]
             except:
                 print("[ERROR] user does not exist.")
@@ -109,8 +96,6 @@ class Patient(Notification):
             connection.commit()
             print("[INFO] Patient added successfully.")
 
-
-
         cursor.close()
         connection.close()
 
@@ -125,7 +110,7 @@ class Patient(Notification):
             new_phone_number (str): The new phone number of the patient. Default is None.
             new_email (str): The new email of the patient. Default is None.
             new_national_code (str): The new national code of the patient. Default is None.
-
+            new_birthdate (str): The new birthdate of the patient
         Returns:
             None
         """
@@ -260,7 +245,7 @@ class Patient(Notification):
             })
         cursor.close()
         connection.close()
-        self.make_table_current_appointment(self ,current_appointments)
+        self.make_table_current_appointment(self, current_appointments)
 
     def view_appointments_history(self):
         """
@@ -307,8 +292,6 @@ class Patient(Notification):
 
         cursor.close()
         connection.close()
-
-
 
         # Print the appointment history using tabulate
         self.make_table_appointment(appointments_history)
