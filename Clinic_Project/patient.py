@@ -14,8 +14,6 @@ class Patient(Notification):
         self.birth_date = None
         self.national_code = None
         self.email = None
-        self.appointments = []
-
 
     def select_patient(self, phone_number):
         connection = establish_connection()

@@ -2,6 +2,8 @@ from patient import Patient
 from secretary import Secretary
 from appointment import Appointment
 from DATABASE import establish_connection
+
+
 class Customer:
     def __init__(self, phone_number: str):
         # Initialize instances of Patient, Secretary, and Appointment classes
@@ -14,8 +16,8 @@ class Customer:
         cursor = connection.cursor()
         query = "SELECT * FROM user_table WHERE phone_number = %s "
         values = [self.phone_number]
-        cursor.execute(query,values)
-        self.user_id,self.first_name,self.last_name,self.email,self.phone_number,self.password,self.user_type = cursor.fetchone()
+        cursor.execute(query, values)
+        self.user_id, self.first_name, self.last_name, self.email, self.phone_number, self.password, self.user_type = cursor.fetchone()
 
     def select_patient(self, phone_number: str):
         try:
@@ -40,15 +42,16 @@ class Customer:
             self.patient = None
             print("[ERROR] Who are you bitch?")
 
-    def add_patient(self, first_name, last_name, phone_number, birthdate, international_code, email):
+    def add_patient(self, first_name, last_name, phone_number, birthdate, national_code, email):
         # Delegate the add_patient functionality to the Patient class
-
-        self.patient.add_patient(first_name, last_name,phone_number, birthdate, international_code, email, self.phone_number)
+        self.patient.add_patient(first_name, last_name, phone_number, birthdate, national_code, email,
+                                 self.phone_number)
 
     def update_patient_info(self, new_phone_number=None, new_first_name=None, new_last_name=None,
-                            new_email=None, new_birthday=None, new_international_code=None):
+                            new_email=None, new_birthday=None, new_national_code=None):
         # Delegate the update_patient_info functionality to the Patient class
-        self.patient.update_patient_info(new_phone_number, new_first_name, new_last_name, new_email, new_birthday, new_international_code)
+        self.patient.update_patient_info(new_phone_number, new_first_name, new_last_name, new_email, new_birthday,
+                                         new_national_code)
 
     def remove_patient(self):
         # Check if the user_phone and phone_number exist in the user_patient table

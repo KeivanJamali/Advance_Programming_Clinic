@@ -12,7 +12,7 @@ def get_phone_number():
     pattern = r"^\d{11}$"
     if re.match(pattern, phone_number):
         print("[REPLY] Valid phone number")
-        return int(phone_number)
+        return phone_number
     else:
         print("[REPLY] Invalid phone number")
 
@@ -132,115 +132,125 @@ def main():
         user = User()
         user = register_or_login(user)
         if user.user_type == "1":
-            while not exit_:
-                clinic_name = input("Enter clinic name:")
-                address = input("Enter address:")
-                try:
-                    secretary = Secretary(clinic_name, address, user.phone_number)
-                    if secretary.clinic is None:
-                        print("[REPLY] Invalid clinic name or address. Try again!")
-                        continue
-                except:
+            clinic_name = input("Enter clinic name:")
+            address = input("Enter address:")
+            try:
+                secretary = Secretary(clinic_name, address, user.phone_number)
+                if secretary.clinic is None:
                     print("[REPLY] Invalid clinic name or address. Try again!")
                     continue
-                while not exit_:
-                    print("1- Add or Select Doctor")
-                    print("2- Update Clinic Profile")
-                    print("3- View Appointments for Clinic")
-                    print("4- View Profile")
-                    print("5- Exit")
+            except:
+                print("[REPLY] Invalid clinic name or address. Try again!")
+                continue
+            while not exit_:
+                print("1- Add or Select Doctor")
+                print("2- Update Clinic Profile")
+                print("3- View Appointments for Clinic")
+                print("4- View Profile")
+                print("5- Exit")
 
-                    act_home_page = input("Enter your action number:")
+                act_home_page = input("Enter your action number:")
 
-                    if act_home_page == "1":
-                        while not exit_:
-                            phone_number = input("Enter phone number: ")
-                            first_name = input("Enter first name: ")
-                            last_name = input("Enter last name: ")
+                if act_home_page == "1":
+                    phone_number = input("Enter phone number: ")
+                    first_name = input("Enter first name: ")
+                    last_name = input("Enter last name: ")
+                    try:
+                        secretary.add_or_select_doctor(phone_number, first_name, last_name)
+                    except:
+                        print("[REPLY] Invalid phone number or first name or last name. Try again!")
+                        continue
+                    while not exit_:
+                        print("1- Update Doctor Profile")
+                        print("2- add availability")
+                        print("3- Edit appointments for Doctor")
+                        print("4- View Schedule for Doctor")
+                        print("5- Back")
+                        print("6- Exit")
+
+                        act_doctor_page = input("Enter your action number: ")
+
+                        if act_doctor_page == "1":
+                            new_first_name = input(
+                                "Enter new first name (if you don't want to enter one, please enter 'N'): ")
+                            new_last_name = input(
+                                "Enter new last name (if you don't want to enter one, please enter 'N'): ")
+                            new_phone_number = input(
+                                "Enter new phone number (if you don't want to enter one, please enter 'N'):")
+                            new_first_name = new_first_name if new_first_name != "N" else None
+                            new_last_name = new_last_name if new_last_name != "N" else None
+                            new_phone_number = new_phone_number if new_phone_number != "N" else None
                             try:
-                                secretary.add_or_select_doctor(phone_number, first_name, last_name)
+                                secretary.update_doctor_profile(new_first_name, new_last_name, new_phone_number)
                             except:
-                                print("[REPLY] Invalid phone number or first name or last name. Try again!")
+                                print("[REPLY] Invalid first name or last name or phone number. Try again!")
                                 continue
-                            while not exit_:
-                                print("1- Update Doctor Profile")
-                                print("2- Edit appointments for Doctor")
-                                print("3- View Schedule for Doctor")
-                                print("4- Back")
-                                print("5- Exit")
 
-                                act_doctor_page = input("Enter your action number: ")
+                        elif act_doctor_page == "2":
+                            new_date = input("Enter new date(yyyy/mm/dd): ")
+                            new_time = input("Enter new time(hh:mm): ")
+                            try:
+                                secretary.add_or_select_doctor(phone_number, first_name, last_name, new_date, new_time)
+                                print("[REPLY] Availability added successfully!")
+                            except:
+                                print("[REPLY] Invalid date or time. Try again!")
+                                continue
 
-                                if act_doctor_page == "1":
-                                    new_first_name = input(
-                                        "Enter new first name (if you don't want to enter one, please enter 'N'): ")
-                                    new_last_name = input(
-                                        "Enter new last name (if you don't want to enter one, please enter 'N'): ")
-                                    new_phone_number = input(
-                                        "Enter new phone number (if you don't want to enter one, please enter 'N'):")
-                                    new_first_name = new_first_name if new_first_name != "N" else None
-                                    new_last_name = new_last_name if new_last_name != "N" else None
-                                    new_phone_number = new_phone_number if new_phone_number != "N" else None
-                                    try:
-                                        secretary.update_doctor_profile(new_first_name, new_last_name, new_phone_number)
-                                    except:
-                                        print("[REPLY] Invalid first name or last name or phone number. Try again!")
-                                        continue
+                        elif act_doctor_page == "3":
+                            old_date = input("Enter old date(yyyy/mm/dd): ")
+                            old_time = input("Enter old time(hh:mm): ")
+                            new_date = input("Enter new date(yyyy/mm/dd): ")
+                            new_time = input("Enter new time(hh:mm): ")
+                            try:
+                                secretary.edit_appointments_for_doctor(old_date, old_time, new_date, new_time)
+                            except:
+                                print("[REPLY] Invalid date or time. Try again!")
+                                continue
 
-                                elif act_doctor_page == "2":
-                                    old_date = input("Enter old date(yyyy/mm/dd): ")
-                                    old_time = input("Enter old time(hh:mm): ")
-                                    new_date = input("Enter new date(yyyy/mm/dd): ")
-                                    new_time = input("Enter new time(hh:mm): ")
-                                    try:
-                                        secretary.edit_appointments_for_doctor(old_date, old_time, new_date, new_time)
-                                    except:
-                                        print("[REPLY] Invalid date or time. Try again!")
-                                        continue
+                        elif act_doctor_page == "4":
+                            secretary.view_schedule_for_doctor()
 
-                                elif act_doctor_page == "3":
-                                    secretary.view_schedule_for_doctor()
+                        elif act_doctor_page == "5":
+                            break
 
-                                elif act_doctor_page == "4":
-                                    break
+                        elif act_doctor_page == "6":
+                            exit_ = True
+                            break
 
-                                elif act_doctor_page == "5":
-                                    exit_ = True
-                                    break
-
-                                else:
-                                    print("[REPLY] Invalid action. Try again!")
-                                    continue
-
-                    elif act_home_page == "2":
-                        new_clinic_name = input(
-                            "Enter new clinic name (if you don't want to enter one, please enter 'N'): ")
-                        new_address = input("Enter new address (if you don't want to enter one, please enter 'N'): ")
-                        new_clinic_name = new_clinic_name if new_clinic_name != "N" else None
-                        new_address = new_address if new_address != "N" else None
-                        try:
-                            secretary.update_clinic_profile(new_clinic_name, new_address)
-                        except:
-                            print("[REPLY] Invalid clinic name or address. Try again!")
+                        else:
+                            print("[REPLY] Invalid action. Try again!")
                             continue
 
-                    elif act_home_page == "3":
-                        secretary.view_appointments_for_clinic()
-
-                    elif act_home_page == "4":
-                        print(secretary)
-
-                    elif act_home_page == "5":
-                        exit_ = True
-                        break
-
-                    else:
-                        print("[REPLY] Invalid action. Try again!")
+                elif act_home_page == "2":
+                    new_clinic_name = input(
+                        "Enter new clinic name (if you don't want to enter one, please enter 'N'): ")
+                    new_address = input(
+                        "Enter new address (if you don't want to enter one, please enter 'N'): ")
+                    new_clinic_name = new_clinic_name if new_clinic_name != "N" else None
+                    new_address = new_address if new_address != "N" else None
+                    try:
+                        secretary.update_clinic_profile(new_clinic_name, new_address)
+                    except:
+                        print("[REPLY] Invalid clinic name or address. Try again!")
                         continue
+
+                elif act_home_page == "3":
+                    secretary.view_appointments_for_clinic()
+
+                elif act_home_page == "4":
+                    print(secretary)
+
+                elif act_home_page == "5":
+                    exit_ = True
+                    break
+
+                else:
+                    print("[REPLY] Invalid action. Try again!")
+                    continue
 
         elif user.user_type == "2":
             customer = Customer(user.phone_number)
-            while exit_ is False:
+            while not exit_:
                 print("1- Add Patient")
                 print("2- Select Patient")
                 print("3- Exit")
@@ -262,9 +272,10 @@ def main():
                         continue
 
                 elif act_home_page == "2":
-                    while exit_ is False:
+                    while not exit_:
                         print("1- Current User as Patient")
                         print("2- Patient Other Than User")
+                        print("3- Back")
                         print("3- Exit")
                         act_doctor_page = input("Enter your action number: ")
 
@@ -275,14 +286,21 @@ def main():
                         elif act_doctor_page == "2":
                             try:
                                 phone_number_patient = input("Enter patient phone number: ")
+                                customer.select_patient(phone_number_patient)
                             except:
                                 print("[REPLY] Invalid patient phone number. Try again!")
                                 continue
-                            customer.select_patient(phone_number_patient)
 
                         elif act_doctor_page == "3":
+                            break
+
+                        elif act_doctor_page == "4":
                             exit_ = True
                             break
+
+                        else:
+                            print("[REPLY] Invalid action. Try again!")
+                            continue
 
                         while not exit_:
                             print("1- Update Patient Info")
@@ -318,7 +336,8 @@ def main():
                                 new_national = new_national if new_national != "N" else None
 
                                 try:
-                                    customer.update_patient_info(new_phone_number, new_first_name, new_last_name, new_email,
+                                    customer.update_patient_info(new_phone_number, new_first_name, new_last_name,
+                                                                 new_email,
                                                                  new_birthday, new_national)
                                 except:
                                     print(
@@ -346,7 +365,8 @@ def main():
                                 try:
                                     customer.add_appointment(doctor_phone_number, clinic_name, date, time)
                                 except:
-                                    print("[REPLY] Invalid doctor phone number or clinic name or date or time. Try again!")
+                                    print(
+                                        "[REPLY] Invalid doctor phone number or clinic name or date or time. Try again!")
                                     continue
 
                             elif act_patient_page == "6":
