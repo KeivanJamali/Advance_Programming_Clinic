@@ -1,5 +1,4 @@
 from patient import Patient
-from secretary import Secretary
 from appointment import Appointment
 from DATABASE import establish_connection
 

@@ -1,5 +1,3 @@
-from customer import Customer
-from secretary import Secretary
 from DATABASE import establish_connection
 
 

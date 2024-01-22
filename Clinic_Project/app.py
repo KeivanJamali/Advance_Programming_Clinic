@@ -2,6 +2,9 @@ import re
 from user import User
 from secretary import Secretary
 from customer import Customer
+import Builder
+
+Builder.main()
 
 
 def get_phone_number():
