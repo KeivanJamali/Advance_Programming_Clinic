@@ -61,7 +61,7 @@ class User:
         FROM user_table
         WHERE phone_number = %s
         """
-        values = (self.phone_number)
+        values = (self.phone_number,)
         cursor.execute(query, values)
         self.user_id = cursor.fetchone()[0]
 
