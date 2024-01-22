@@ -24,8 +24,8 @@ class Secretary(Notification):
         self.clinic = None
         self._add_clinic()
 
-    def add_doctor(self, phone_number: str, first_name: str, last_name: str, date: str = None,
-                   time: str = None) -> None:
+    def add_or_select_doctor(self, phone_number: str, first_name: str, last_name: str, date: str = None,
+                             time: str = None) -> None:
         """
         Adds a doctor to the clinic. If the date is available it will set availability for that doctor
         in that date and time.
@@ -89,6 +89,8 @@ class Secretary(Notification):
             self.clinic = clinic
         else:
             print("[Wrong] Secretary is not valid to this clinic.")
+            self.clinic_id = None
+            self.clinic = None
 
     def _add_date(self, doctor_phone_number: str, date: str, time: str) -> None:
         """
