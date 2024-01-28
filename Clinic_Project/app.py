@@ -134,6 +134,9 @@ def main():
     while not exit_:
         user = User()
         user = register_or_login(user)
+        if user is None:
+            print("[Wrong] Incorrect password.")
+            continue
         if user.user_type == "1":
             clinic_name = input("Enter clinic name:")
             address = input("Enter address:")

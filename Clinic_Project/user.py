@@ -82,13 +82,16 @@ class User:
         connection = establish_connection()
         cursor = connection.cursor()
 
-        self.password = password
-        self.phone_number = phone_number
-
         # Check if user exists in the database
         query = "SELECT * FROM user_table WHERE phone_number = %s"
-        cursor.execute(query, (self.phone_number,))
+        cursor.execute(query, (phone_number,))
         result = cursor.fetchone()
+
+        if result[5] != password:
+            return
+
+        self.password = password
+        self.phone_number = phone_number
 
         if result:
             # User exists, assign database values to object attributes
