@@ -1,0 +1,74 @@
+<!-- register_or_login.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6">
+                <h1 class="text-center mb-4">Register or Login</h1>
+                {% if error_message %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error_message }}
+                    </div>
+                {% endif %}
+                {% if success_message %}
+                    <div class="alert alert-success" role="alert">
+                        {{ success_message }}
+                    </div>
+                {% endif %}
+                <form method="post" action="{% url 'register_or_login' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="action">Action:</label>
+                        <select class="form-control" id="action" name="action" required>
+                            <option value="login">Login</option>
+                            <option value="register">Register</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone_number">Phone Number:</label>
+                        <input type="text" class="form-control" id="phone_number" name="phone_number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <!-- Additional fields for registration -->
+                    <div class="registration-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="first_name">First Name:</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name">
+                        </div>
+                        <div class="form-group">
+                            <label for="last_name">Last Name:</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" class="form-control" id="email" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="user_type">User Type:</label>
+                            <input type="text" class="form-control" id="user_type" name="user_type">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Show or hide additional fields based on the selected action
+        const actionSelect = document.getElementById('action');
+        const registrationFields = document.querySelector('.registration-fields');
+
+        actionSelect.addEventListener('change', () => {
+            if (actionSelect.value === 'register') {
+                registrationFields.style.display = 'block';
+            } else {
+                registrationFields.style.display = 'none';
+            }
+        });
+    </script>
+{% endblock %}
