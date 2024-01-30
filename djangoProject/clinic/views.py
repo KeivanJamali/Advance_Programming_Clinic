@@ -76,3 +76,24 @@ def secretary_register(request):
     else:
         return render(request, 'secretary_register.html')
 
+
+def add_patient(request):
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        phone_number = request.POST.get('phone_number')
+        birth_date = request.POST.get('birth_date')
+        national_code = request.POST.get('national_code')
+        email = request.POST.get('email')
+        email_check = email if email else None
+
+        customer = Customer()  ## what should i do
+        add = customer.add_patient(first_name, last_name, phone_number, birth_date, national_code, email_check)
+
+        if customer:
+            if add :##raise error
+                return render(request, 'succesful_add_patient.html', {'customer': phone_number})
+            else:
+                return render(request, 'failed_add_patient.html', {'customer': "failed_add_patient"}
+
+
