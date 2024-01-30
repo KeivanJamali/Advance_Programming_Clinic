@@ -1,0 +1,89 @@
+<!-- customer_page.html -->
+{% extends 'base.html' %}
+
+{% block title %}Customer Page{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6">
+                <h1 class="text-center mb-4">Customer Page</h1>
+
+                <!-- First Bar: Add Patient or Select Patient -->
+                <nav class="first-bar">
+                    <h2>Select Action</h2>
+                    <form action="{% url 'customer_page' %}" method="post">
+                        {% csrf_token %}
+                        <label for="action">Select Action:</label>
+                        <select name="action" id="action" required>
+                            <option value="add_patient">Add Patient</option>
+                            <option value="select_patient">Select Patient</option>
+                        </select>
+                        <button type="submit">Go</button>
+                    </form>
+                </nav>
+
+                <!-- Second Bar: Additional Fields based on Action -->
+                <nav class="second-bar" style="display: none;">
+                    <h2>Additional Fields</h2>
+                    <form action="{% url 'customer_page' %}" method="post">
+                        {% csrf_token %}
+                        <!-- Additional fields will be inserted dynamically here based on the selected action -->
+                        <div id="additional-fields"></div>
+                        <button type="submit">Submit</button>
+                    </form>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const actionSelect = document.getElementById('action');
+            const secondBar = document.querySelector('.second-bar');
+            const additionalFields = document.getElementById('additional-fields');
+
+            // Function to show or hide the second bar and additional fields based on the selected action
+            function updateAdditionalFields() {
+                const selectedAction = actionSelect.value;
+                secondBar.style.display = selectedAction === 'add_patient' ? 'none' : 'block';
+                additionalFields.innerHTML = ''; // Clear previous additional fields
+
+                // Add fields based on the selected action
+                if (selectedAction === 'add_patient') {
+                    // Show six input fields for adding a patient
+                    additionalFields.innerHTML = `
+                        <label for="first_name">First Name:</label>
+                        <input type="text" name="first_name" required>
+                        <label for="last_name">Last Name:</label>
+                        <input type="text" name="last_name" required>
+                        <label for="phone_number">Phone Number:</label>
+                        <input type="text" name="phone_number" required>
+                        <label for="birth_date">Birth Date:</label>
+                        <input type="text" name="birth_date" required>
+                        <label for="national_code">National Code:</label>
+                        <input type="text" name="national_code" required>
+                        <label for="email">Email:</label>
+                        <input type="email" name="email">
+                    `;
+                } else if (selectedAction === 'select_patient') {
+                    // Show options for selecting the current user or another user
+                    additionalFields.innerHTML = `
+                        <label for="select_patient">Select Patient:</label>
+                        <select name="select_patient">
+                            <option value="current_user">Current User</option>
+                            <option value="another_user">Another User</option>
+                        </select>
+                    `;
+                }
+                // Add more conditions as needed
+            }
+
+            // Add an event listener to the action selection dropdown
+            actionSelect.addEventListener('change', updateAdditionalFields);
+
+            // Call the function once on page load
+            updateAdditionalFields();
+        });
+    </script>
+{% endblock %}
