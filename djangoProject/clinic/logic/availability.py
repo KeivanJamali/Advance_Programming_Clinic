@@ -3,7 +3,7 @@ import datetime
 
 
 class Availability:
-    def add_availability(self, doctor_phone_number: str, clinic_name: str, date: str, time: str) -> None:
+    def add_availability(self, doctor_phone_number: str, clinic_name: str, date: str, time: str):
         """
         Adds availability for a doctor at a specific clinic on a given date and time.
 
@@ -29,7 +29,7 @@ class Availability:
         result = cursor.fetchone()
         if result is None:
             print("[Wrong] Doctor not found")
-            return
+            return False
         doctor_id = result[0]
 
         # Step 2: Get the clinic_id using the clinic_name
@@ -39,7 +39,7 @@ class Availability:
         result = cursor.fetchone()
         if result is None:
             print("[Wrong] Clinic not found")
-            return
+            return False
         clinic_id = result[0]
 
         # Step 3: Check if the availability already exists for the doctor and date
@@ -58,7 +58,7 @@ class Availability:
             print("[Wrong] Already exists for the input data")
             cursor.close()
             connection.close()
-            return
+            return False
 
         # Step 4: Insert a new row into the availability_table
         cursor.fetchall()
@@ -71,6 +71,7 @@ class Availability:
 
         cursor.close()
         connection.close()
+        return True
 
     def get_available_times(self) -> list:
         """

@@ -74,7 +74,7 @@ class Doctor:
         connection.close()
 
     def update_doctor_profile(self, new_first_name: str = None, new_last_name: str = None,
-                              new_phone_number: str = None) -> None:
+                              new_phone_number: str = None):
         """
         Updates the profile of the doctor in the database(doctor_table). You can change each one of them you like to change.
 
@@ -95,7 +95,7 @@ class Doctor:
 
         if existing_doctor:
             print("[Wrong] A doctor with the provided phone number already exists.")
-            return
+            return False
 
         update_fields = []
         values = []
@@ -112,7 +112,7 @@ class Doctor:
 
         if not update_fields:
             print("[Wrong] No fields provided for update.")
-            return
+            return False
 
         values.append(self.phone_number)
 
@@ -140,6 +140,7 @@ class Doctor:
                 self.first_name = new_first_name
             if new_last_name:
                 self.last_name = new_last_name
+        return True
 
     def view_doctor_schedule(self) -> list:
         """

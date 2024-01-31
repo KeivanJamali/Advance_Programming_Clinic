@@ -6,7 +6,7 @@ from .notification import Notification
 
 
 class Secretary(Notification):
-    def __init__(self, clinic_name: str, address: str, phone_number: str) -> None:
+    def __init__(self, phone_number: str, clinic_name: str = None, address: str = None) -> None:
         """
         Initializes a new instance of the class with the specified clinic name, address, and phone number.
 
@@ -22,10 +22,28 @@ class Secretary(Notification):
         self.phone_number = phone_number
         self.doctor = None
         self.clinic = None
-        self._add_clinic()
+
+    def pick_clinic(self):
+        if self.clinic_name and self.address:
+            self._add_clinic()
+        else:
+            connection = establish_connection()
+            cursor = connection.cursor()
+
+            cursor.execute("SELECT * FROM clinic_table WHERE secretary_phone_number = %s",
+                           (self.phone_number,))
+
+            result = cursor.fetchone()
+            if result:
+                self.clinic_id = result[0]
+                self.clinic_name = result[1]
+                self.address = result[2]
+                self.clinic = Clinic(clinic_name=self.clinic_name, address=self.address,
+                                     secretary_phone_number=self.phone_number).save()
+        return self
 
     def add_or_select_doctor(self, phone_number: str, first_name: str, last_name: str, date: str = None,
-                             time: str = None) -> None:
+                             time: str = None):
         """
         Adds a doctor to the clinic. If the date is available it will set availability for that doctor
         in that date and time.
@@ -48,7 +66,7 @@ class Secretary(Notification):
 
         if not self.clinic_id:
             print("[ERROR] Clinic not set. Please add_clinic first.")
-            return
+            return False
 
         connection = establish_connection()
         cursor = connection.cursor()
@@ -67,10 +85,11 @@ class Secretary(Notification):
         cursor.close()
         connection.close()
 
-        if date and time:
-            self._add_date(doctor.phone_number, date, time)
-
         self.doctor = doctor
+
+        if date and time:
+            result = self._add_date(phone_number, date, time)
+            return result
 
     def _add_clinic(self) -> None:
         """
@@ -92,7 +111,7 @@ class Secretary(Notification):
             self.clinic_id = None
             self.clinic = None
 
-    def _add_date(self, doctor_phone_number: str, date: str, time: str) -> None:
+    def _add_date(self, doctor_phone_number: str, date: str, time: str):
         """
         Add a new date and time to the availability schedule for a specific doctor.
 
@@ -105,11 +124,12 @@ class Secretary(Notification):
             None
         """
         availability = Availability()
-        availability.add_availability(doctor_phone_number=doctor_phone_number, clinic_name=self.clinic_name, date=date,
-                                      time=time)
+        result = availability.add_availability(doctor_phone_number=doctor_phone_number, clinic_name=self.clinic_name,
+                                               date=date, time=time)
+        return result
 
     def update_doctor_profile(self, new_first_name: str = None, new_last_name: str = None,
-                              new_phone_number: str = None) -> None:
+                              new_phone_number: str = None):
         """
         Update the doctor's profile with the given information.
 
@@ -118,10 +138,14 @@ class Secretary(Notification):
             new_last_name (str): The new last name of the doctor. Default is None.
             new_phone_number (str): The new phone number of the doctor. Default is None.
         """
-        self.doctor.update_doctor_profile(new_first_name=new_first_name, new_last_name=new_last_name,
-                                          new_phone_number=new_phone_number)
+        result = self.doctor.update_doctor_profile(new_first_name=new_first_name, new_last_name=new_last_name,
+                                                   new_phone_number=new_phone_number)
+        if result:
+            return True
+        else:
+            return False
 
-    def view_schedule_for_doctor(self) -> None:
+    def view_schedule_for_doctor(self) -> list:
         """
         Retrieves the schedule for the doctor and displays it in a table format.
 
@@ -132,8 +156,15 @@ class Secretary(Notification):
         - None
         """
         schedule = self.doctor.view_doctor_schedule()
+        # if schedule:
+        #     self.make_table_doctor(doctor=self.doctor, doctor_schedule=schedule)
         if schedule:
-            self.make_table_doctor(doctor=self.doctor, doctor_schedule=schedule)
+            return schedule
+        else:
+            return [{"date": 0, "time": 0,
+                     "clinic": 0,
+                     "patient_name": 0,
+                     "patient_phone_number": 0}]
 
     def edit_appointments_for_doctor(self, old_date, old_time, new_date, new_time) -> None:
         """
@@ -151,7 +182,7 @@ class Secretary(Notification):
         self.doctor.edit_appointments(old_date=old_date, old_time=old_time, new_date=new_date, new_time=new_time,
                                       clinic_name=self.clinic_name)
 
-    def update_clinic_profile(self, new_clinic_name=None, new_address=None, new_secretary_phone_number=None) -> None:
+    def update_clinic_profile(self, new_clinic_name=None, new_address=None) -> None:
         """
         Updates the clinic profile with new information.
 
@@ -159,14 +190,11 @@ class Secretary(Notification):
         :type new_clinic_name: str or None
         :param new_address: The new address of the clinic (default: None)
         :type new_address: str or None
-        :param new_secretary_phone_number: The new phone number of the clinic's secretary (default: None)
-        :type new_secretary_phone_number: str or None
         :return: None
         """
-        self.clinic.update_clinic_info(new_clinic_name=new_clinic_name, new_address=new_address,
-                                       new_secretary_phone_number=new_secretary_phone_number)
+        self.clinic.update_clinic_info(new_clinic_name=new_clinic_name, new_address=new_address)
 
-    def view_appointments_for_clinic(self) -> None:
+    def view_appointments_for_clinic(self) -> list:
         """
         Retrieve and display the appointments for the clinic.
 
@@ -174,8 +202,16 @@ class Secretary(Notification):
             None
         """
         appointments = self.clinic.view_appointments()
+        # if appointments:
+        #     self.make_table_clinic(clinic=self.clinic, clinic_appointment=appointments)
         if appointments:
-            self.make_table_clinic(clinic=self.clinic, clinic_appointment=appointments)
+            return appointments
+        else:
+            return [{"date": 0, "time": 0,
+                     "doctor_name": 0,
+                     "doctor_phone_number": 0,
+                     "patient_name": 0,
+                     "patient_phone_number": 0}]
 
     def __str__(self) -> str:
         """

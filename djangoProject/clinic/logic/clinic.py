@@ -20,7 +20,7 @@ class Clinic:
         self.secretary_phone_number = secretary_phone_number
         self.clinic_id = None
 
-    def save(self) -> None:
+    def save(self):
         """
         Saves the current clinic instance to the database.
 
@@ -72,16 +72,15 @@ class Clinic:
 
         cursor.close()
         connection.close()
+        return self
 
-    def update_clinic_info(self, new_clinic_name: str = None, new_address: str = None,
-                           new_secretary_phone_number: str = None) -> None:
+    def update_clinic_info(self, new_clinic_name: str = None, new_address: str = None) -> None:
         """
         Updates the clinic information in the database. You can change each parameter you like.
 
         Args:
             new_clinic_name (str): The new name of the clinic (default: None).
             new_address (str): The new address of the clinic (default: None).
-            new_secretary_phone_number (str): The new phone number of the clinic secretary (default: None).
 
         Returns:
             None
@@ -111,9 +110,6 @@ class Clinic:
         if new_address:
             update_fields.append("address = %s")
             values.append(new_address)
-        if new_secretary_phone_number:
-            update_fields.append("secretary_phone_number = %s")
-            values.append(new_secretary_phone_number)
 
         if not update_fields:
             print("[Wrong] No fields provided for update.")
@@ -143,8 +139,6 @@ class Clinic:
                 self.address = new_address
             if new_clinic_name:
                 self.clinic_name = new_clinic_name
-            if new_secretary_phone_number:
-                self.secretary_phone_number = new_secretary_phone_number
 
     def view_appointments(self) -> list:
         """

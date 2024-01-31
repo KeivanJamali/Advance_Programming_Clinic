@@ -1,0 +1,141 @@
+<!-- doctor_page.html -->
+{% extends "secretary_page.html" %}
+
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6">
+                <h1 class="text-center mb-4">Doctor Accessibility</h1>
+                {% if error_message %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error_message }}
+                    </div>
+                {% endif %}
+                {% if success_message %}
+                    <div class="alert alert-success" role="alert">
+                        {{ success_message }}
+                    </div>
+                {% endif %}
+                {% if schedule %}
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Clinic</th>
+                            <th>Patient</th>
+                            <th>Patient Phone Number</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for appointment in appointments %}
+                            <tr>
+                                <td>{{ appointment.date }}</td>
+                                <td>{{ appointment.time }}</td>
+                                <td>{{ appointment.clinic }}</td>
+                                <td>{{ appointment.patient_name }}</td>
+                                <td>{{ appointment.patient_phone_number }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+                <form method="post" action="{% url 'doctor_page' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="action_2">Action:</label>
+                        <select class="form-control" id="action_2" name="action" required>
+                            <option value="1">View schedule for doctor</option>
+                            <option value="2">Update doctor profile</option>
+                            <option value="3">Add availability</option>
+                            <option value="4">Edit appointments for doctor</option>
+                            <option value="5">Back</option>
+                            <option value="6">Logout</option>
+                        </select>
+                    </div>
+                    <!-- Additional fields for 2 -->
+                    <div class="updateprofile-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="new_first_name">First Name:</label>
+                            <input type="text" class="form-control" id="new_first_name" name="new_first_name">
+                        </div>
+                        <div class="form-group">
+                            <label for="new_last_name">Last Name:</label>
+                            <input type="text" class="form-control" id="new_last_name" name="new_last_name">
+                        </div>
+                        <div class="form-group">
+                            <label for="new_phone_number">Phone Number:</label>
+                            <input type="text" class="form-control" id="new_phone_number" name="new_phone_number">
+                        </div>
+                    </div>
+                    
+                    <!-- Additional fields for 3 -->
+                    <div class="add-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="new1_date">New Date(yyyy/mm/dd):</label>
+                            <input type="text" class="form-control" id="new1_date" name="new1_date">
+                        </div>
+                        <div class="form-group">
+                            <label for="new1_time">New Time(hh:mm):</label>
+                            <input type="text" class="form-control" id="new1_time" name="new1_time">
+                        </div>
+                    </div>
+                    
+                    <!-- Additional fields for 4 -->
+                    <div class="change-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="old_date">Old Date(yyyy/mm/dd):</label>
+                            <input type="text" class="form-control" id="old_date" name="old_date">
+                        </div>
+                        <div class="form-group">
+                            <label for="old_time">Old Time(hh:mm):</label>
+                            <input type="text" class="form-control" id="old_time" name="old_time">
+                        </div>
+                        <div class="form-group">
+                            <label for="new2_date">New Date(yyyy/mm/dd):</label>
+                            <input type="text" class="form-control" id="new2_date" name="new2_date">
+                        </div>
+                        <div class="form-group">
+                            <label for="new2_time">New Time(hh:mm):</label>
+                            <input type="text" class="form-control" id="new2_time" name="new2_time">
+                        </div>
+                    </div>
+                    <input type="hidden" name="phone_number" value="{{ phone_number }}">
+                    <input type="hidden" name="doctor_phone_number" value="{{ doctor_phone_number }}">
+                    <input type="hidden" name="doctor_first_name" value="{{ doctor_first_name }}">
+                    <input type="hidden" name="doctor_last_name" value="{{ doctor_last_name }}">
+                    <input type="hidden" name="submitted" value="true">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Show or hide additional fields based on the selected action
+        const actionSelect = document.getElementById('action_2');
+        const updateprofileFields = document.querySelector('.updateprofile-fields');
+        const addFields = document.querySelector('.add-fields');
+        const changeFields = document.querySelector('.change-fields');
+
+        actionSelect.addEventListener('change', () => {
+            if (actionSelect.value === '2') {
+                updateprofileFields.style.display = 'block';
+                addFields.style.display = 'none';
+                changeFields.style.display = 'none';
+            } else if (actionSelect.value === '3') {
+                updateprofileFields.style.display = 'none';
+                addFields.style.display = 'block';
+                changeFields.style.display = 'none';
+            } else if (actionSelect.value === '4') {
+                updateprofileFields.style.display = 'none';
+                addFields.style.display = 'none';
+                changeFields.style.display = 'block';
+            } else {
+                updateprofileFields.style.display = 'none';
+                addFields.style.display = 'none';
+                changeFields.style.display = 'none';
+            }
+        });
+    </script>
+{% endblock %}
