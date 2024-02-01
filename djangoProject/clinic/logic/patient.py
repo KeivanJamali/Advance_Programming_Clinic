@@ -81,7 +81,7 @@ class Patient(Notification):
                 user_id = cursor.fetchone()[0]
             except:
                 print("[ERROR] user does not exist.")
-                return
+                return False
 
             # Insert into user_patient table
             insert_user_patient_query = """
@@ -96,6 +96,7 @@ class Patient(Notification):
 
         cursor.close()
         connection.close()
+        return True
 
     def update_patient_info(self, new_phone_number=None, new_first_name=None, new_last_name=None, new_birthdate=None,
                             new_email=None, new_national_code=None):
@@ -243,7 +244,8 @@ class Patient(Notification):
             })
         cursor.close()
         connection.close()
-        self.make_table_current_appointment(self, current_appointments)
+        #self.make_table_current_appointment(self, current_appointments)
+        return current_appointments
 
     def view_appointments_history(self):
         """
@@ -292,4 +294,5 @@ class Patient(Notification):
         connection.close()
 
         # Print the appointment history using tabulate
-        self.make_table_appointment(appointments_history)
+        #self.make_table_appointment(appointments_history)
+        return appointments_history

@@ -23,6 +23,7 @@ urlpatterns = [
     path("register_or_login/", register_or_login, name="register_or_login"),
     path("secretary_register/", secretary_register, name="secretary_register"),
     path("secretary_page/", secretary_page, name="secretary_page"),
-    path("doctor_page/", doctor_page, name="doctor_page")
-    # path("customer/", customer_page, name="customer_page")
+    path("doctor_page/", doctor_page, name="doctor_page"),
+    path("customer/", customer_page, name="customer_page"),
+    path("select_patient/", select_patient, name="select_patient")
 ]

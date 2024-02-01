@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect
-from .logic.user import User
-from .logic.secretary import Secretary
+from django.shortcuts import render
+
 from .logic.customer import Customer
+from .logic.secretary import Secretary
+from .logic.user import User
 
 
 def register_or_login(request):
@@ -193,8 +194,7 @@ def doctor_page(request):
                         return render(request, 'doctor_page.html',
                                       {'error_message': error_message, 'phone_number': phone_number,
                                        "doctor_phone_number": doctor_phone_number,
-                                       "doctor_first_name": doctor_first_name,
-                                       "doctor_last_name": doctor_last_name})
+                                       "doctor_first_name": doctor_first_name, "doctor_last_name": doctor_last_name})
                 except:
                     error_message = "Invalid date or time. Try again!"
                     return render(request, 'doctor_page.html',
@@ -246,3 +246,139 @@ def doctor_page(request):
             return render(request, 'doctor_page.html',
                           {'phone_number': phone_number, "doctor_phone_number": doctor_phone_number,
                            "doctor_first_name": doctor_first_name, "doctor_last_name": doctor_last_name})
+
+
+def customer_page(request):
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        phone_number = request.POST.get('phone_number')  # Use POST to get phone_number
+        customer = Customer('09013010047')
+
+        if action == 'add_patient':
+            # Extract data from the form
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            # Do not use the line below, as phone_number is already obtained above
+            new_phone_number = request.POST.get('new_phone_number')
+            birth_date = request.POST.get('birth_date')
+            national_code = request.POST.get('national_code')
+            email = request.POST.get('email')
+            email_check = email if email else None
+
+            try:
+                add = customer.add_patient(first_name, last_name, new_phone_number, birth_date, national_code,
+                                           email_check)
+
+                if add:
+                    success_message = 'Patient added successfully'
+                    return render(request, 'customer_page.html', {'success_message': success_message
+                        , 'phone_number': phone_number})
+                else:
+                    error_message = 'There is something wrong'
+                    return render(request, 'customer_page.html', {'error_message': error_message,
+                                                                  'phone_number': phone_number})
+
+            except:
+                error_message = 'something wrong happened'
+                return render(request, 'customer_page.html', {'error_message': error_message,
+                                                              'customer': "failed_add_patient"})
+
+        elif action == "select_patient":
+            select_patient = request.POST.get('select_patient')
+
+            if select_patient == "current_user":
+                # Use POST to get phone_number
+                phone_number = request.POST.get('phone_number')
+                customer = Customer('09013010047')
+                if customer:
+                    return render(request, 'select_patient.html', {'customer': customer})
+                else:
+                    return render(request, 'customer_page.html', {'error_message': 'there is something wrong'})
+            elif select_patient == "another_patient":
+                # Use POST to get phone_number
+                phone_number = request.POST.get('phone_number')
+                customer = Customer('09013010047')
+                if customer:
+                    return render(request, 'select_patient.html', {'customer': customer})
+                else:
+                    return render(request, 'customer_page.html', {'error_message': 'there is something'})
+
+        elif action == "logout":
+            return render(request, 'register_or_login.html')
+
+def select_patient(request):
+
+    if request.method == 'POST':
+        act = request.POST.get('act')
+        # customer = request.GET.get("customer")
+        customer = Customer('09013010047')
+        try:
+            if act == "update_patient_info":
+                new_first_name = request.POST.get('new_first_name')
+                new_last_name = request.POST.get('new_last_name')
+                new_phone_number = request.POST.get('new_phone_number')
+                new_email = request.POST.get('new_email')
+                new_national_code = request.POST.get('new_national_code')
+                new_birthdate = request.POST.get('new_birthdate')
+
+                customer.update_patient_info(
+                    new_phone_number=new_phone_number,
+                    new_first_name=new_first_name,
+                    new_last_name=new_last_name,
+                    new_email=new_email,
+                    new_birthdate=new_birthdate,
+                    new_national_code=new_national_code
+                )
+
+                return render(request, 'select_patient.html', {'success_message': 'Successfully Updated Patient'})
+
+            elif act == "remove_patient_info":
+                customer.remove_patient()
+                return render(request, 'select_patient.html', {'success_message': 'Successfully Removed Patient'})
+
+            elif act == "view_current_appointment":
+                appointments = customer.view_current_appointments()
+                return render(request, 'select_patient.html', {'success_message': 'Successfully Showed',
+                                                               'appointments': appointments})
+
+            elif act == "view_appointment_history":
+                appointments = customer.view_appointments_history()
+                return render(request, 'select_patient.html',
+                              {'success_message': 'Successfully Showed', 'appointments': appointments})
+
+            elif act == "add_appointment":
+                doctor_phone_number = request.POST.get('doctor_phone_number')
+                clinic_name = request.POST.get('clinic_name')
+                date = request.POST.get('date')
+                time = request.POST.get('time')
+
+                customer.add_appointment(doctor_phone_number, clinic_name, date, time)
+
+                return render(request, 'select_patient.html', {"success_message": "Successfully Added appointment"})
+
+            elif act == "cancel_appointment":
+                date = request.POST.get('date')
+                time = request.POST.get('time')
+                customer.cancel_appointment(date, time)
+                return render(request, 'select_patient.html', {"success_message": "Successfully Cancelled appointment"})
+
+            elif act == "reschedule_appointment":
+                old_date = request.POST.get('old_date')
+                old_time = request.POST.get('old_time')
+                new_date = request.POST.get('new_date')
+                new_time = request.POST.get('new_time')
+
+                customer.reschedule_appointment(old_date, old_time, new_date, new_time)
+
+                return render(request, 'select_patient.html',
+                              {"success_message": "Successfully rescheduled appointment"})
+
+            elif act == "logout":
+                return render(request, 'register_or_login.html')
+
+            elif act == "back":
+                return render(request, 'customer_page.html')
+        except Exception as e:
+            return render(request, 'select_patient.html', {'error_message': str(e)})
+    return render(request, 'select_patient.html')

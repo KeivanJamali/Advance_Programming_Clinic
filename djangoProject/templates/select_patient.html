@@ -1,0 +1,177 @@
+<!-- select_patient.html -->
+{% extends 'base.html' %}
+
+{% block title %}Select Patient{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+    <h1>Select Patient</h1>
+
+    {% if success_message %}
+        <div class="alert alert-success" role="alert">
+            {{ success_message }}
+        </div>
+    {% endif %}
+
+    {% if error_message %}
+        <div class="alert alert-danger" role="alert">
+            {{ error_message }}
+        </div>
+    {% endif %}
+
+    {% if appointments %}
+        <h2>Appointment Schedule</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Doctor</th>
+                    <th>Clinic</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in appointments %}
+                    <tr>
+                        <td>{{ appointment.date }}</td>
+                        <td>{{ appointment.time }}</td>
+                        <td>{{ appointment.doctor_name }}</td>
+                        <td>{{ appointment.clinic }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+        <form method="post" action="{% url 'select_patient' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="act">Select Action:</label>
+                <select class="form-control" id="act" name="act" required>
+                    <option value="" selected disabled>Select an Action</option>
+                    <option value="update_patient_info">Update Patient Info</option>
+                    <option value="remove_patient_info">Remove Patient Info</option>
+                    <option value="view_current_appointment">View Current Appointment</option>
+                    <option value="view_appointment_history">View Appointment History</option>
+                    <option value="add_appointment">Add Appointment</option>
+                    <option value="cancel_appointment">Cancel Appointment</option>
+                    <option value="reschedule_appointment">Reschedule Appointment</option>
+                    <option value="logout">logout</option>
+                    <option value="back">back</option>
+                    <!-- Add other action options here... -->
+                </select>
+            </div>
+
+            <div id="dynamic-fields" class="mt-3">
+                <!-- Additional fields will be dynamically inserted here based on user selection -->
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-2">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("act").addEventListener("change", function () {
+            var dynamicFields = document.getElementById("dynamic-fields");
+            dynamicFields.innerHTML = ""; // Clear existing fields
+
+            var selectedAction = this.value;
+
+            // Add fields based on selected action
+            if (selectedAction === "update_patient_info") {
+                // Add fields for updating patient info
+                dynamicFields.innerHTML = `
+                    <div class="form-group">
+                        <label for="new_first_name">New First Name:</label>
+                        <input type="text" class="form-control" id="new_first_name" name="new_first_name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="new_last_name">New Last Name:</label>
+                        <input type="text" class="form-control" id="new_last_name" name="new_last_name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="new_phone_number">New Phone Number:</label>
+                        <input type="text" class="form-control" id="new_phone_number" name="new_phone_number" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="new_email">New Email:</label>
+                        <input type="email" class="form-control" id="new_email" name="new_email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="new_national_code">New National Code:</label>
+                        <input type="text" class="form-control" id="new_national_code" name="new_national_code" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="new_birthdate">New Birthdate:</label>
+                        <input type="text" class="form-control" id="new_birthdate" name="new_birthdate" required>
+                    </div>
+                `;
+            } else if (selectedAction === "add_appointment") {
+                // Add fields for adding appointment
+                dynamicFields.innerHTML = `
+                    <div class="form-group">
+                        <label for="doctor_phone_number">Doctor Phone Number:</label>
+                        <input type="text" class="form-control" id="doctor_phone_number" name="doctor_phone_number" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="clinic_name">Clinic Name:</label>
+                        <input type="text" class="form-control" id="clinic_name" name="clinic_name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date">Date:</label>
+                        <input type="text" class="form-control" id="date" name="date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="time">Time:</label>
+                        <input type="text" class="form-control" id="time" name="time" required>
+                    </div>
+                `;
+            } else if (selectedAction === "cancel_appointment") {
+                // Add fields for canceling appointment
+                dynamicFields.innerHTML = `
+                    <div class="form-group">
+                        <label for="cancel_date">Date:</label>
+                        <input type="text" class="form-control" id="cancel_date" name="date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cancel_time">Time:</label>
+                        <input type="text" class="form-control" id="cancel_time" name="time" required>
+                    </div>
+                `;
+            } else if (selectedAction === "reschedule_appointment") {
+            // Add fields for rescheduling appointment
+            dynamicFields.innerHTML = `
+                <div class="form-group">
+                    <label for="old_date">Old Date:</label>
+                    <input type="text" class="form-control" id="old_date" name="old_date">
+                </div>
+                <div class="form-group">
+                    <label for="old_time">Old Time:</label>
+                    <input type="text" class="form-control" id="old_time" name="old_time">
+                </div>
+                <div class="form-group">
+                    <label for="new_date">New Date:</label>
+                    <input type="text" class="form-control" id="new_date" name="new_date">
+                </div>
+                <div class="form-group">
+                    <label for="new_time">New Time:</label>
+                    <input type="text" class="form-control" id="new_time" name="new_time">
+                </div>
+            `;}
+            // Add other conditions for different actions...
+
+            // You can continue adding conditions for other actions...
+
+        });
+    </script>
+{% endblock %}

@@ -1,6 +1,6 @@
 import mysql.connector
 
-database = ["localhost", "3306", "root", "1234", "clinic_data"]
+database = ["localhost", "3306", "root", "@Erfan1229", "clinic_data"]
 
 
 def establish_connection():
