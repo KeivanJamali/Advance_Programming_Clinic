@@ -1,5 +1,6 @@
-from .DATABASE import establish_connection
 import datetime
+
+from .DATABASE import establish_connection
 from .notification import Notification
 
 
@@ -128,7 +129,7 @@ class Patient(Notification):
 
         update_fields = []
         values = []
-
+        print(f"[INFO] {new_email}")
         # Build the update query based on provided new information
         if new_phone_number:
             update_fields.append("phone_number = %s")
@@ -141,13 +142,13 @@ class Patient(Notification):
             values.append(new_last_name)
         if new_birthdate:
             update_fields.append("birthdate = %s")
+            values.append(new_email)
         if new_national_code:
             update_fields.append("national_code = %s")
             values.append(new_national_code)
         if new_email:
             update_fields.append("email = %s")
-            values.append(new_email)
-
+            values.append(new_birthdate)
         if not update_fields:
             # If no fields provided for update, print info and return
             print("[INFO] No fields provided for update.")
@@ -178,6 +179,7 @@ class Patient(Notification):
                 self.last_name = new_last_name
             if new_phone_number:
                 self.phone_number = new_phone_number
+        return True
 
     def remove_patient(self):
         """
@@ -239,12 +241,12 @@ class Patient(Notification):
             current_appointments.append({
                 "Date": formatted_date,
                 "Time": formatted_time,
-                "Doctor Name": f"{doctor_first_name} {doctor_last_name}",
-                "Clinic Name": clinic_name
+                "DoctorName": f"{doctor_first_name} {doctor_last_name}",
+                "ClinicName": clinic_name
             })
         cursor.close()
         connection.close()
-        #self.make_table_current_appointment(self, current_appointments)
+        # self.make_table_current_appointment(self, current_appointments)
         return current_appointments
 
     def view_appointments_history(self):
@@ -283,16 +285,16 @@ class Patient(Notification):
             formatted_time = datetime.datetime(1, 1, 1) + time
             formatted_time = formatted_time.strftime("%H:%M")
 
-            appointments_history.append([
-                formatted_date,
-                formatted_time,
-                f"{doctor_first_name} {doctor_last_name}",
-                clinic_name
-            ])
+            appointments_history.append({
+                "Date": formatted_date,
+                "Time": formatted_time,
+                "DoctorName": f"{doctor_first_name} {doctor_last_name}",
+                "ClinicName": clinic_name
+            })
 
         cursor.close()
         connection.close()
 
         # Print the appointment history using tabulate
-        #self.make_table_appointment(appointments_history)
+        # self.make_table_appointment(self, appointments_history)
         return appointments_history

@@ -1,11 +1,11 @@
+from .DATABASE import establish_connection
 from .availability import Availability
 from .notification import Notification
-from .DATABASE import establish_connection
 
 
 class Appointment(Availability, Notification):
     def add_appointment(self, doctor_phone_number: str, clinic_name: str, patient_phone_number: str, date: str,
-                        time: str) -> None:
+                        time: str) -> bool:
         """
         Adds an appointment to the clinic's calendar.
 
@@ -34,7 +34,7 @@ class Appointment(Availability, Notification):
             print("[Wrong] Patient not found")
             cursor.close()
             connection.close()
-            return
+            return False
         patient_id = result[0]
 
         # Step 2: Find the doctor_id based on the doctor's phone number
@@ -46,7 +46,7 @@ class Appointment(Availability, Notification):
             print("[Wrong] Doctor not found")
             cursor.close()
             connection.close()
-            return
+            return False
         doctor_id = result[0]
 
         # Step 3: Check if the doctor is available on the given date
@@ -65,7 +65,7 @@ class Appointment(Availability, Notification):
             print("[Wrong] Doctor is not available on the given date")
             cursor.close()
             connection.close()
-            return
+            return False
 
         availability_id = result
 
@@ -78,7 +78,7 @@ class Appointment(Availability, Notification):
             print("[Wrong] Clinic not found")
             cursor.close()
             connection.close()
-            return
+            return False
         clinic_id = result[0]
 
         # Step 5: Check if the clinic is available on the given date
@@ -96,7 +96,7 @@ class Appointment(Availability, Notification):
             print("[Wrong] Clinic is not available on the given date")
             cursor.close()
             connection.close()
-            return
+            return False
 
         # Step 6: Insert a new row into the appointment_table
         query = "INSERT INTO calendar_table (doctor_id, clinic_id, patient_id, appointment_date, appointment_time, canceled) VALUES (%s, %s, %s, %s, %s, %s)"
@@ -114,8 +114,9 @@ class Appointment(Availability, Notification):
 
         cursor.close()
         connection.close()
+        return True
 
-    def cancel_appointment(self, patient_phone_number: str, date: str, time: str) -> None:
+    def cancel_appointment(self, patient_phone_number: str, date: str, time: str) -> bool:
         """
         Cancels an appointment based on the patient's phone number, date, and time.
 
@@ -139,7 +140,7 @@ class Appointment(Availability, Notification):
             print("[Wrong] Patient not found")
             cursor.close()
             connection.close()
-            return
+            return False
         patient_id = result[0]
 
         # Step 2: Find the appointment_id based on the patient_id and date and time
@@ -158,7 +159,7 @@ class Appointment(Availability, Notification):
             print("[Wrong] Appointment not found")
             cursor.close()
             connection.close()
-            return
+            return False
 
         calendar_id, doctor_id, clinic_id = result
 
@@ -185,7 +186,7 @@ class Appointment(Availability, Notification):
             print("[Wrong] something unusual happened")
             cursor.close()
             connection.close()
-            return
+            return False
         availability_id = result
 
         # Step 4: Update the availability_table for the cancellation date
@@ -197,7 +198,7 @@ class Appointment(Availability, Notification):
 
         cursor.close()
         connection.close()
-
+        return True
     def reschedule_appointment(self, patient_phone_number: str, old_date: str, old_time: str, new_date: str,
                                new_time: str) -> None:
         """
@@ -316,3 +317,4 @@ class Appointment(Availability, Notification):
 
         cursor.close()
         connection.close()
+        return True

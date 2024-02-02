@@ -27,14 +27,16 @@ class Customer:
             cursor.execute(query, values)
             user_id = cursor.fetchone()[0]
         except:
-            print("[ERROR] There is no user with that phone]")
+            print("[ERROR] There is no user with that phone")
             return None
 
         self.patient.select_patient(phone_number)
-
+        print(self.patient.patient_id)
+        print(user_id)
         query = "SELECT * FROM customer_patient WHERE user_id = %s AND patient_id = %s"
         cursor.execute(query, (user_id, self.patient.patient_id))
         user_patient_entry = cursor.fetchone()
+        print(user_patient_entry)
         if user_patient_entry:
             print("[INFO] Successfully selected patient")
         else:
@@ -47,7 +49,7 @@ class Customer:
                                  self.phone_number)
 
     def update_patient_info(self, new_phone_number=None, new_first_name=None, new_last_name=None,
-                            new_email=None, new_birthday=None, new_national_code=None):
+                            new_birthday=None, new_email=None,  new_national_code=None):
         # Delegate the update_patient_info functionality to the Patient class
         self.patient.update_patient_info(new_phone_number, new_first_name, new_last_name, new_email, new_birthday,
                                          new_national_code)

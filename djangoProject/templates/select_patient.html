@@ -33,10 +33,10 @@
             <tbody>
                 {% for appointment in appointments %}
                     <tr>
-                        <td>{{ appointment.date }}</td>
-                        <td>{{ appointment.time }}</td>
-                        <td>{{ appointment.doctor_name }}</td>
-                        <td>{{ appointment.clinic }}</td>
+                        <td>{{ appointment.Date }}</td>
+                        <td>{{ appointment.Time }}</td>
+                        <td>{{ appointment.DoctorName }}</td>
+                        <td>{{ appointment.ClinicName }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -45,6 +45,8 @@
 
         <form method="post" action="{% url 'select_patient' %}">
             {% csrf_token %}
+            <input type="hidden" name="phone_number" value="{{ phone_number }}">
+            <input type="hidden" name="your_phone_number" value="{{ your_phone_number }}">
 
             <div class="form-group">
                 <label for="act">Select Action:</label>
