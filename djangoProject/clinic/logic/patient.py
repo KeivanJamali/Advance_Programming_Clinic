@@ -218,7 +218,7 @@ class Patient(Notification):
             FROM calendar_table a
             JOIN doctor_table d ON a.doctor_id = d.doctor_id
             JOIN clinic_table c ON a.clinic_id = c.clinic_id
-            WHERE a.patient_id = %s AND a.appointment_date >= %s
+            WHERE a.patient_id = %s AND a.appointment_date >= %s AND a.canceled = 0
             ORDER BY a.appointment_date, a.appointment_time
         """
         current_date = datetime.date.today()

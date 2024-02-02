@@ -45,13 +45,13 @@ class Customer:
 
     def add_patient(self, first_name, last_name, phone_number, birthdate, national_code, email):
         # Delegate the add_patient functionality to the Patient class
-        self.patient.add_patient(first_name, last_name, phone_number, birthdate, national_code, email,
+        return self.patient.add_patient(first_name, last_name, phone_number, birthdate, national_code, email,
                                  self.phone_number)
 
     def update_patient_info(self, new_phone_number=None, new_first_name=None, new_last_name=None,
                             new_birthday=None, new_email=None,  new_national_code=None):
         # Delegate the update_patient_info functionality to the Patient class
-        self.patient.update_patient_info(new_phone_number, new_first_name, new_last_name, new_email, new_birthday,
+        return self.patient.update_patient_info(new_phone_number, new_first_name, new_last_name, new_email, new_birthday,
                                          new_national_code)
 
     def remove_patient(self):
@@ -68,12 +68,12 @@ class Customer:
 
     def add_appointment(self, doctor_phone_number, clinic_name, date, time):
         # Delegate the add_appointment functionality to the Appointment class
-        self.appointment.add_appointment(doctor_phone_number, clinic_name, self.patient.phone_number, date, time)
+        return self.appointment.add_appointment(doctor_phone_number, clinic_name, self.patient.phone_number, date, time)
 
     def cancel_appointment(self, date, time):
         # Delegate the cancel_appointment functionality to the Appointment class
-        self.appointment.cancel_appointment(self.patient.phone_number, date, time)
+        return self.appointment.cancel_appointment(self.patient.phone_number, date, time)
 
     def reschedule_appointment(self, old_date, old_time, new_date, new_time):
         # Delegate the reschedule_appointment functionality to the Appointment class
-        self.appointment.reschedule_appointment(self.patient.phone_number, old_date, old_time, new_date, new_time)
+        return self.appointment.reschedule_appointment(self.patient.phone_number, old_date, old_time, new_date, new_time)

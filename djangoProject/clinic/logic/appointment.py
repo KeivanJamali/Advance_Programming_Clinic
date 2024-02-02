@@ -114,6 +114,7 @@ class Appointment(Availability, Notification):
 
         cursor.close()
         connection.close()
+        print("true")
         return True
 
     def cancel_appointment(self, patient_phone_number: str, date: str, time: str) -> bool:

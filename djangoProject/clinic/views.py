@@ -249,12 +249,9 @@ def doctor_page(request):
 
 
 def customer_page(request):
-    print(request)
     if request.method == 'POST':
         action = request.POST.get('action')
-        print(request.POST)
         phone_number = request.POST.get('phone_number')  # Use POST to get phone_number
-        print(f'this is {phone_number}')
         customer = Customer(phone_number)
 
         if action == 'add_patient':
@@ -274,15 +271,16 @@ def customer_page(request):
 
                 if add:
                     success_message = 'Patient added successfully'
-                    return render(request, 'customer_page.html', {'success_message': success_message
-                        , 'phone_number': phone_number})
+                    return render(request, 'customer_page.html',
+                                  {'success_message': success_message
+                                      , 'phone_number': phone_number})
                 else:
-                    error_message = 'There is something wrong'
+                    error_message = 'There is something wrong happened.'
                     return render(request, 'customer_page.html', {'error_message': error_message,
                                                                   'phone_number': phone_number})
 
             except:
-                error_message = 'something wrong happened'
+                error_message = 'Something wrong happened.'
                 return render(request, 'customer_page.html', {'error_message': error_message,
                                                               'customer': "failed_add_patient"})
 
@@ -294,9 +292,11 @@ def customer_page(request):
                 your_phone_number = request.POST.get('phone_number')
                 customer = Customer(phone_number)
                 if customer:
-                    return render(request, 'select_patient.html', {'phone_number': phone_number,'your_phone_number': your_phone_number})
+                    return render(request, 'select_patient.html',
+                                  {'phone_number': phone_number, 'your_phone_number': your_phone_number})
                 else:
-                    return render(request, 'customer_page.html', {'error_message': 'there is something wrong'})
+                    return render(request, 'customer_page.html',
+                                  {'error_message': 'There is something wrong happened.'})
             elif select_patient == "another_patient":
                 # Use POST to get phone_number
                 phone_number = request.POST.get('phone_number')
@@ -306,7 +306,7 @@ def customer_page(request):
                     return render(request, 'select_patient.html', {'phone_number': phone_number,
                                                                    "your_phone_number": your_phone_number})
                 else:
-                    return render(request, 'customer_page.html', {'error_message': 'there is something'})
+                    return render(request, 'customer_page.html', {'error_message': 'There is something happened.'})
 
         elif action == "logout":
             return render(request, 'register_or_login.html', {'phone_number': phone_number})
@@ -319,8 +319,6 @@ def select_patient(request):
         customer = Customer(phone_number)
         your_phone_number = request.POST.get("your_phone_number")
         customer.select_patient(your_phone_number)
-        print(request.POST)
-        print(f'customer  {customer}')
         try:
             if act == "update_patient_info":
                 new_first_name = request.POST.get('new_first_name')
@@ -329,8 +327,7 @@ def select_patient(request):
                 new_email = request.POST.get('new_email')
                 new_national_code = request.POST.get('new_national_code')
                 new_birthdate = request.POST.get('new_birthdate')
-                print(f"this is new email: {new_email}")
-                customer.update_patient_info(
+                result = customer.update_patient_info(
                     new_phone_number=new_phone_number,
                     new_first_name=new_first_name,
                     new_last_name=new_last_name,
@@ -339,21 +336,14 @@ def select_patient(request):
                     new_national_code=new_national_code
                 )
 
-                if customer.update_patient_info(
-                    new_phone_number=new_phone_number,
-                    new_first_name=new_first_name,
-                    new_last_name=new_last_name,
-                    new_birthday=new_birthdate,
-                    new_email=new_email,
-                    new_national_code=new_national_code
-                ):
+                if result:
                     return render(request, 'select_patient.html', {"phone_number": phone_number,
                                                                    'your_phone_number': new_phone_number,
-                                                                   'success_message': 'Successfully Updated Patient'})
+                                                                   'success_message': 'Patient successfully updated!'})
                 else:
                     return render(request, 'select_patient.html', {"phone_number": phone_number,
                                                                    'your_phone_number': your_phone_number,
-                                                                   'error_message': 'something went wrong'})
+                                                                   'error_message': 'Something went wrong.'})
 
             elif act == "remove_patient_info":
                 customer.remove_patient()
@@ -363,12 +353,13 @@ def select_patient(request):
             elif act == "view_current_appointment":
                 appointments = customer.view_current_appointments()
                 if customer.view_current_appointments():
-                    return render(request, 'select_patient.html', {'success_message': 'Successfully Showed',
-                                                                   'appointments': appointments,
-                                                                   "phone_number": phone_number,
-                                                                   'your_phone_number': your_phone_number})
+                    return render(request, 'select_patient.html',
+                                  {'success_message': 'Appointments Successfully Showed.',
+                                   'appointments': appointments,
+                                   "phone_number": phone_number,
+                                   'your_phone_number': your_phone_number})
                 else:
-                    return render(request, 'select_patient.html', {'error_message': 'Something Went Wrong',
+                    return render(request, 'select_patient.html', {'error_message': 'Something Went Wrong.',
                                                                    'appointments': appointments,
                                                                    "phone_number": phone_number,
                                                                    'your_phone_number': your_phone_number})
@@ -376,28 +367,26 @@ def select_patient(request):
                 appointments = customer.view_appointments_history()
                 if customer.view_appointments_history():
                     return render(request, 'select_patient.html',
-                                  {'success_message': 'Successfully Showed', 'appointments': appointments,
+                                  {'success_message': 'Appointments Successfully Showed.', 'appointments': appointments,
                                    "phone_number": phone_number, 'your_phone_number': your_phone_number})
                 else:
                     return render(request, 'select_patient.html',
-                                  {'error_message': 'Something wrong', 'appointments': appointments,
+                                  {'error_message': 'Something went wrong.', 'appointments': appointments,
                                    "phone_number": phone_number, 'your_phone_number': your_phone_number})
             elif act == "add_appointment":
                 doctor_phone_number = request.POST.get('doctor_phone_number')
                 clinic_name = request.POST.get('clinic_name')
                 date = request.POST.get('date')
                 time = request.POST.get('time')
-
-                if customer.add_appointment(doctor_phone_number, clinic_name, date, time):
-                    print("hi")
+                result = customer.add_appointment(doctor_phone_number, clinic_name, date, time)
+                if result:
                     return render(request, 'select_patient.html', {"phone_number": phone_number,
                                                                    'your_phone_number': your_phone_number,
-                                                                   "success_message": "Be Better!"})
-                elif not customer.add_appointment(doctor_phone_number, clinic_name, date, time):
-                    print("bye")
+                                                                   "success_message": "Appointment added successfully. Be Better!"})
+                else:
                     return render(request, 'select_patient.html', {"phone_number": phone_number,
                                                                    'your_phone_number': your_phone_number,
-                                                                   "error_message": "there is something wrong"})
+                                                                   "error_message": "There is something wrong."})
 
             elif act == "cancel_appointment":
                 date = request.POST.get('date')
@@ -406,11 +395,11 @@ def select_patient(request):
                 if customer.cancel_appointment(date, time) == False:
                     return render(request, 'select_patient.html', {"phone_number": phone_number,
                                                                    'your_phone_number': your_phone_number,
-                                                                   "success_message": "Successfully Cancelled appointment"})
+                                                                   "success_message": "Appointment Successfully Cancelled."})
                 else:
                     return render(request, 'select_patient.html', {"phone_number": phone_number,
                                                                    'your_phone_number': your_phone_number,
-                                                                   "error_message": "something wrong"})
+                                                                   "error_message": "something wrong happened."})
             elif act == "reschedule_appointment":
                 old_date = request.POST.get('old_date')
                 old_time = request.POST.get('old_time')
@@ -421,12 +410,12 @@ def select_patient(request):
                     return render(request, 'select_patient.html',
                                   {"phone_number": phone_number,
                                    'your_phone_number': your_phone_number,
-                                   "success_message": "Successfully rescheduled appointment"})
+                                   "success_message": " appointment Successfully rescheduled."})
                 else:
                     return render(request, 'select_patient.html',
                                   {"phone_number": phone_number,
                                    'your_phone_number': your_phone_number,
-                                   "error_message": "Something wrong"})
+                                   "error_message": "Something wrong happened."})
 
             elif act == "logout":
                 return render(request, 'register_or_login.html')
