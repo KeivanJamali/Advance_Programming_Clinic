@@ -13,7 +13,7 @@ class Customer:
 
         connection = establish_connection()
         cursor = connection.cursor()
-        query = "SELECT * FROM user_table WHERE phone_number = %s "
+        query = "SELECT * FROM user_table WHERE phone_number = %s"
         values = [self.phone_number]
         cursor.execute(query, values)
         self.user_id, self.first_name, self.last_name, self.email, self.phone_number, self.password, self.user_type = cursor.fetchone()

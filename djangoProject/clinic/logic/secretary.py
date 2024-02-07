@@ -91,7 +91,7 @@ class Secretary(Notification):
             result = self._add_date(phone_number, date, time)
             return result
 
-    def _add_clinic(self) -> None:
+    def add_clinic(self) -> None:
         """
         Creates a new clinic and saves it to the database.
 
@@ -166,7 +166,7 @@ class Secretary(Notification):
                      "patient_name": 0,
                      "patient_phone_number": 0}]
 
-    def edit_appointments_for_doctor(self, old_date, old_time, new_date, new_time) -> None:
+    def edit_appointments_for_doctor(self, old_date, old_time, new_date, new_time):
         """
         Edit appointments for a doctor.
 
@@ -179,8 +179,8 @@ class Secretary(Notification):
         Returns:
             None
         """
-        self.doctor.edit_appointments(old_date=old_date, old_time=old_time, new_date=new_date, new_time=new_time,
-                                      clinic_name=self.clinic_name)
+        return self.doctor.edit_appointments(old_date=old_date, old_time=old_time, new_date=new_date, new_time=new_time,
+                                         clinic_name=self.clinic_name)
 
     def update_clinic_profile(self, new_clinic_name=None, new_address=None) -> None:
         """

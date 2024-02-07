@@ -90,12 +90,12 @@ class Doctor:
         existing_doctor_query = """
         SELECT * FROM doctor_table WHERE phone_number = %s
         """
-        cursor.execute(existing_doctor_query, (new_phone_number,))
-        existing_doctor = cursor.fetchone()
+        # cursor.execute(existing_doctor_query, (new_phone_number,))
+        # existing_doctor = cursor.fetchone()
 
-        if existing_doctor:
-            print("[Wrong] A doctor with the provided phone number already exists.")
-            return False
+        # if existing_doctor:
+        #     print("[Wrong] A doctor with the provided phone number already exists.")
+        #     return False
 
         update_fields = []
         values = []
@@ -203,7 +203,7 @@ class Doctor:
 
         return doctor_schedule
 
-    def edit_appointments(self, old_date: str, old_time: str, new_date: str, new_time: str, clinic_name: str) -> None:
+    def edit_appointments(self, old_date: str, old_time: str, new_date: str, new_time: str, clinic_name: str):
         """
         Edit appointments by rescheduling them to a new date and time.
 
@@ -222,16 +222,17 @@ class Doctor:
         """
         schedule = self.view_doctor_schedule()
         if not schedule:
-            return
+            return False
         schedule = [x for x in schedule if
                     x["date"] == old_date and x["time"] == old_time and x["clinic"] == clinic_name]
         if not schedule:
             print("[Wrong] Appointment not found.")
-            return
+            return False
         patient_phone_number = schedule[0]["patient_phone_number"]
         appointment = Appointment()
         appointment.reschedule_appointment(patient_phone_number=patient_phone_number, old_date=old_date,
                                            old_time=old_time, new_date=new_date, new_time=new_time)
+        return True
 
     def __str__(self) -> str:
         """

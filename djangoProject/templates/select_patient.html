@@ -86,32 +86,32 @@
                 dynamicFields.innerHTML = `
                     <div class="form-group">
                         <label for="new_first_name">New First Name:</label>
-                        <input type="text" class="form-control" id="new_first_name" name="new_first_name" required>
+                        <input type="text" class="form-control" id="new_first_name" name="new_first_name">
                     </div>
 
                     <div class="form-group">
                         <label for="new_last_name">New Last Name:</label>
-                        <input type="text" class="form-control" id="new_last_name" name="new_last_name" required>
+                        <input type="text" class="form-control" id="new_last_name" name="new_last_name">
                     </div>
 
                     <div class="form-group">
                         <label for="new_phone_number">New Phone Number:</label>
-                        <input type="text" class="form-control" id="new_phone_number" name="new_phone_number" required>
+                        <input type="text" class="form-control" id="new_phone_number" name="new_phone_number">
                     </div>
 
                     <div class="form-group">
                         <label for="new_email">New Email:</label>
-                        <input type="email" class="form-control" id="new_email" name="new_email" required>
+                        <input type="email" class="form-control" id="new_email" name="new_email">
                     </div>
 
                     <div class="form-group">
                         <label for="new_national_code">New National Code:</label>
-                        <input type="text" class="form-control" id="new_national_code" name="new_national_code" required>
+                        <input type="text" class="form-control" id="new_national_code" name="new_national_code">
                     </div>
 
                     <div class="form-group">
-                        <label for="new_birthdate">New Birthdate:</label>
-                        <input type="text" class="form-control" id="new_birthdate" name="new_birthdate" required>
+                        <label for="new_birthdate">New Birthdate(yyyy/mm/dd):</label>
+                        <input type="text" class="form-control" id="new_birthdate" name="new_birthdate">
                     </div>
                 `;
             } else if (selectedAction === "add_appointment") {
@@ -128,12 +128,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="date">Date:</label>
+                        <label for="date">Date(yyyy/mm/dd):</label>
                         <input type="text" class="form-control" id="date" name="date" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="time">Time:</label>
+                        <label for="time">Time(hh:mm):</label>
                         <input type="text" class="form-control" id="time" name="time" required>
                     </div>
                 `;
@@ -141,12 +141,12 @@
                 // Add fields for canceling appointment
                 dynamicFields.innerHTML = `
                     <div class="form-group">
-                        <label for="cancel_date">Date:</label>
+                        <label for="cancel_date">Date(yyyy/mm/dd):</label>
                         <input type="text" class="form-control" id="cancel_date" name="date" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="cancel_time">Time:</label>
+                        <label for="cancel_time">Time(hh:mm):</label>
                         <input type="text" class="form-control" id="cancel_time" name="time" required>
                     </div>
                 `;
@@ -154,19 +154,19 @@
             // Add fields for rescheduling appointment
             dynamicFields.innerHTML = `
                 <div class="form-group">
-                    <label for="old_date">Old Date:</label>
+                    <label for="old_date">Old Date(yyyy/mm/dd):</label>
                     <input type="text" class="form-control" id="old_date" name="old_date">
                 </div>
                 <div class="form-group">
-                    <label for="old_time">Old Time:</label>
+                    <label for="old_time">Old Time(hh:mm):</label>
                     <input type="text" class="form-control" id="old_time" name="old_time">
                 </div>
                 <div class="form-group">
-                    <label for="new_date">New Date:</label>
+                    <label for="new_date">New Date(yyyy/mm/dd):</label>
                     <input type="text" class="form-control" id="new_date" name="new_date">
                 </div>
                 <div class="form-group">
-                    <label for="new_time">New Time:</label>
+                    <label for="new_time">New Time(hh:mm):</label>
                     <input type="text" class="form-control" id="new_time" name="new_time">
                 </div>
             `;}

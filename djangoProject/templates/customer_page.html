@@ -4,121 +4,121 @@
 {% block title %}Customer Page{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h1>Customer Page</h1>     
-    {% if success_message %}
+    <div class="container mt-4">
+        <h1>Customer Page</h1>
+        {% if success_message %}
             <div class="alert alert-success" role="alert">
                 {{ success_message }}
             </div>
-    {% endif %}
-    
-    {% if error_message %}
+        {% endif %}
+
+        {% if error_message %}
             <div class="alert alert-danger" role="alert">
                 {{ error_message }}
             </div>
-    {% endif %}
-    <form method="post" action="{% url 'customer_page' %}">
-        {% csrf_token %}
+        {% endif %}
+        <form method="post" action="{% url 'customer_page' %}">
+            {% csrf_token %}
 
-        <label for="action">Select Action:</label>
-        <select name="action" id="action" class="form-control">
-            <option value="" selected disabled>Select an Action</option>
-            <option value="add_patient">Add Patient</option>
-            <option value="select_patient">Select Patient</option>
-            <option value="logout">Logout</option>
-        </select>
-        
-        <div id="add_patient_form" style="display: none;" class="mt-3">
-            <!-- Add Patient Form -->
-            <h2>Add Patient</h2>
-            <label for="first_name">First Name:</label>
-            <input type="text" name="first_name" class="form-control"><br>
-
-            <label for="last_name">Last Name:</label>
-            <input type="text" name="last_name" class="form-control"><br>
-
-            <label for="new_phone_number">New Phone Number:</label>
-            <input type="text" name="new_phone_number" class="form-control"><br>
-
-            <label for="birth_date">Birth Date:</label>
-            <input type="text" name="birth_date" class="form-control"><br>
-
-            <label for="national_code">National Code:</label>
-            <input type="text" name="national_code" class="form-control"><br>
-
-            <label for="email">Email:</label>
-            <input type="email" name="email" class="form-control"><br>
-
-            <button type="submit" class="btn btn-primary mt-2">Add Patient</button>
-        </div>
-
-        <div id="select_patient_form" style="display: none;" class="mt-3">
-            <!-- Select Patient Form (Unchanged) -->
-            <h2>Select Patient</h2>
-            <label for="select_patient">Select Patient:</label>
-            <select name="select_patient" id="select_patient" class="form-control">
+            <label for="action">Select Action:</label>
+            <select name="action" id="action" class="form-control">
                 <option value="" selected disabled>Select an Action</option>
-                <option value="current_user">Current User</option>
-                <option value="another_patient">Another Patient</option>
+                <option value="add_patient">Add Patient</option>
+                <option value="select_patient">Select Patient</option>
+                <option value="logout">Logout</option>
             </select>
 
-            <div id="phone_number_input" style="display: none;" class="mt-3">
-                <label for="your_phone_number">Enter Phone Number:</label>
-                <input type="text" name="your_phone_number" class="form-control"><br>
+            <div id="add_patient_form" style="display: none;" class="mt-3">
+                <!-- Add Patient Form -->
+                <h2>Add Patient</h2>
+                <label for="first_name">First Name:</label>
+                <input type="text" name="first_name" class="form-control"><br>
+
+                <label for="last_name">Last Name:</label>
+                <input type="text" name="last_name" class="form-control"><br>
+
+                <label for="new_phone_number">Phone Number:</label>
+                <input type="text" name="new_phone_number" class="form-control"><br>
+
+                <label for="birth_date">Birth Date(yyyy/mm/dd):</label>
+                <input type="text" name="birth_date" class="form-control"><br>
+
+                <label for="national_code">National Code:</label>
+                <input type="text" name="national_code" class="form-control"><br>
+
+                <label for="email">Email:</label>
+                <input type="email" name="email" class="form-control"><br>
+
+                <button type="submit" class="btn btn-primary mt-2">Add Patient</button>
             </div>
-            
-            <button type="submit" class="btn btn-primary mt-2">Select</button>
-        </div>
 
-        <div id="logout" style="display: none;" class="mt-3">
-            <!-- Logout Section (Added confirmation and fixed variable name) -->
-            <h2>Logout</h2>
-            <p>Are you sure you want to logout?</p>
-            <button type="submit" class="btn btn-danger">Logout</button>
-        </div>
-        <input type="hidden" name="phone_number" value="{{ phone_number }}">
-    </form>
-</div>
+            <div id="select_patient_form" style="display: none;" class="mt-3">
+                <!-- Select Patient Form (Unchanged) -->
+                <h2>Select Patient</h2>
+                <label for="select_patient">Select Patient:</label>
+                <select name="select_patient" id="select_patient" class="form-control">
+                    <option value="" selected disabled>Select an Action</option>
+                    <option value="current_user">Current User</option>
+                    <option value="another_patient">Another Patient</option>
+                </select>
 
-<script>
-    // JavaScript to toggle visibility of form sections based on selected action
-    document.getElementById("action").addEventListener("change", function () {
-        var addPatientForm = document.getElementById("add_patient_form");
-        var selectPatientForm = document.getElementById("select_patient_form");
-        var logoutSection = document.getElementById("logout");  // Fixed variable name
-        var phoneNumberInput = document.getElementById("phone_number_input");
+                <div id="phone_number_input" style="display: none;" class="mt-3">
+                    <label for="your_phone_number">Enter Phone Number:</label>
+                    <input type="text" name="your_phone_number" class="form-control"><br>
+                </div>
 
-        if (this.value === "add_patient") {
-            addPatientForm.style.display = "block";
-            selectPatientForm.style.display = "none";
-            logoutSection.style.display = "none";
+                <button type="submit" class="btn btn-primary mt-2">Select</button>
+            </div>
+
+            <div id="logout" style="display: none;" class="mt-3">
+                <!-- Logout Section (Added confirmation and fixed variable name) -->
+                <h2>Logout</h2>
+                <p>Are you sure you want to logout?</p>
+                <button type="submit" class="btn btn-danger">Logout</button>
+            </div>
+            <input type="hidden" name="phone_number" value="{{ phone_number }}">
+        </form>
+    </div>
+
+    <script>
+        // JavaScript to toggle visibility of form sections based on selected action
+        document.getElementById("action").addEventListener("change", function () {
+            var addPatientForm = document.getElementById("add_patient_form");
+            var selectPatientForm = document.getElementById("select_patient_form");
+            var logoutSection = document.getElementById("logout");  // Fixed variable name
+            var phoneNumberInput = document.getElementById("phone_number_input");
+
+            if (this.value === "add_patient") {
+                addPatientForm.style.display = "block";
+                selectPatientForm.style.display = "none";
+                logoutSection.style.display = "none";
+                phoneNumberInput.style.display = "none";
+            } else if (this.value === "select_patient") {
+                addPatientForm.style.display = "none";
+                selectPatientForm.style.display = "block";
+                logoutSection.style.display = "none";
+            } else if (this.value === "logout") {
+                addPatientForm.style.display = "none";
+                selectPatientForm.style.display = "none";
+                logoutSection.style.display = "block";
+                phoneNumberInput.style.display = "none";
+            }
+
+            // Reset the phone_number_input visibility
             phoneNumberInput.style.display = "none";
-        } else if (this.value === "select_patient") {
-            addPatientForm.style.display = "none";
-            selectPatientForm.style.display = "block";
-            logoutSection.style.display = "none";
-        } else if (this.value === "logout") {
-            addPatientForm.style.display = "none";
-            selectPatientForm.style.display = "none";
-            logoutSection.style.display = "block";
-            phoneNumberInput.style.display = "none";
-        }
+        });
 
-        // Reset the phone_number_input visibility
-        phoneNumberInput.style.display = "none";
-    });
+        // JavaScript to show phone_number_input when "Another Patient" is selected
+        document.getElementById("select_patient").addEventListener("change", function () {
+            var phoneNumberInput = document.getElementById("phone_number_input");
 
-    // JavaScript to show phone_number_input when "Another Patient" is selected
-    document.getElementById("select_patient").addEventListener("change", function () {
-        var phoneNumberInput = document.getElementById("phone_number_input");
+            if (this.value === "another_patient") {
+                phoneNumberInput.style.display = "block";
+            } else {
+                phoneNumberInput.style.display = "none";
+            }
+        });
 
-        if (this.value === "another_patient") {
-            phoneNumberInput.style.display = "block";
-        } else {
-            phoneNumberInput.style.display = "none";
-        }
-    });
-    
-</script>
-    
+    </script>
+
 {% endblock %}

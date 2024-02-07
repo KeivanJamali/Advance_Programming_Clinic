@@ -66,14 +66,17 @@ def secretary_register(request):
         phone_number = request.POST.get("phone_number")
         try:
             secretary = Secretary(phone_number=phone_number, clinic_name=clinic_name, address=address)
+            secretary.add_clinic()
             if secretary.clinic is None:
-                error_message = "Invalid clinic name or address. Please try again."
-                return render(request, "secretary_register.html", {"error_message": error_message})
+                error_message = "Invalid clinic name or address."
+                return render(request, "secretary_register.html",
+                              {"error_message": error_message, "phone_number": phone_number})
             else:
                 return render(request, "secretary_page.html", {"phone_number": phone_number})
         except:
             error_message = "Invalid clinic name or address. Please try again."
-            return render(request, "secretary_register.html", {"error_message": error_message})
+            return render(request, "secretary_register.html",
+                          {"error_message": error_message, "phone_number": phone_number})
     else:
         return render(request, "secretary_register.html")
 
@@ -208,12 +211,22 @@ def doctor_page(request):
                 old_date = request.POST.get('old_date')
                 old_time = request.POST.get('old_time')
                 try:
-                    secretary.edit_appointments_for_doctor(old_date, old_time, new_date, new_time)
-                    success_message = f"Successfully changed to {new_date} {new_time}."
-                    return render(request, 'doctor_page.html',
-                                  {"success_message": success_message, "phone_number": phone_number,
-                                   "doctor_phone_number": doctor_phone_number, "doctor_first_name": doctor_first_name,
-                                   "doctor_last_name": doctor_last_name})
+                    result = secretary.edit_appointments_for_doctor(old_date, old_time, new_date, new_time)
+                    if result:
+                        success_message = f"Successfully changed to {new_date} {new_time}."
+                        return render(request, 'doctor_page.html',
+                                      {"success_message": success_message, "phone_number": phone_number,
+                                       "doctor_phone_number": doctor_phone_number,
+                                       "doctor_first_name": doctor_first_name,
+                                       "doctor_last_name": doctor_last_name})
+                    else:
+                        error_message = "Invalid date or time. Try again!"
+                        return render(request, 'doctor_page.html',
+                                      {'error_message': error_message, 'phone_number': phone_number,
+                                       "doctor_phone_number": doctor_phone_number,
+                                       "doctor_first_name": doctor_first_name,
+                                       "doctor_last_name": doctor_last_name})
+
 
                 except:
                     error_message = "Invalid date or time. Try again!"
@@ -324,6 +337,7 @@ def select_patient(request):
                 new_first_name = request.POST.get('new_first_name')
                 new_last_name = request.POST.get('new_last_name')
                 new_phone_number = request.POST.get('new_phone_number')
+                new_phone_number = your_phone_number if new_phone_number is None else new_phone_number
                 new_email = request.POST.get('new_email')
                 new_national_code = request.POST.get('new_national_code')
                 new_birthdate = request.POST.get('new_birthdate')
@@ -359,7 +373,7 @@ def select_patient(request):
                                    "phone_number": phone_number,
                                    'your_phone_number': your_phone_number})
                 else:
-                    return render(request, 'select_patient.html', {'error_message': 'Something Went Wrong.',
+                    return render(request, 'select_patient.html', {'error_message': 'There are no appointments.',
                                                                    'appointments': appointments,
                                                                    "phone_number": phone_number,
                                                                    'your_phone_number': your_phone_number})
@@ -371,7 +385,7 @@ def select_patient(request):
                                    "phone_number": phone_number, 'your_phone_number': your_phone_number})
                 else:
                     return render(request, 'select_patient.html',
-                                  {'error_message': 'Something went wrong.', 'appointments': appointments,
+                                  {'error_message': 'There are no appointments.', 'appointments': appointments,
                                    "phone_number": phone_number, 'your_phone_number': your_phone_number})
             elif act == "add_appointment":
                 doctor_phone_number = request.POST.get('doctor_phone_number')
@@ -392,7 +406,7 @@ def select_patient(request):
                 date = request.POST.get('date')
                 time = request.POST.get('time')
 
-                if customer.cancel_appointment(date, time) == False:
+                if customer.cancel_appointment(date, time):
                     return render(request, 'select_patient.html', {"phone_number": phone_number,
                                                                    'your_phone_number': your_phone_number,
                                                                    "success_message": "Appointment Successfully Cancelled."})
