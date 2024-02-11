@@ -223,6 +223,7 @@ class Doctor:
         schedule = self.view_doctor_schedule()
         if not schedule:
             return False
+        print(schedule[0].data, old_date)
         schedule = [x for x in schedule if
                     x["date"] == old_date and x["time"] == old_time and x["clinic"] == clinic_name]
         if not schedule:

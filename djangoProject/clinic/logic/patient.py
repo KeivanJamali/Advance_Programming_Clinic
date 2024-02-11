@@ -140,13 +140,13 @@ class Patient(Notification):
         if new_last_name:
             update_fields.append("last_name = %s")
             values.append(new_last_name)
-        if new_birthdate:
+        if new_email:
             update_fields.append("birthdate = %s")
             values.append(new_email)
         if new_national_code:
             update_fields.append("national_code = %s")
             values.append(new_national_code)
-        if new_email:
+        if new_birthdate:
             update_fields.append("email = %s")
             values.append(new_birthdate)
         if not update_fields:

@@ -180,7 +180,7 @@ class Secretary(Notification):
             None
         """
         return self.doctor.edit_appointments(old_date=old_date, old_time=old_time, new_date=new_date, new_time=new_time,
-                                         clinic_name=self.clinic_name)
+                                             clinic_name=self.clinic_name)
 
     def update_clinic_profile(self, new_clinic_name=None, new_address=None) -> None:
         """
@@ -202,8 +202,8 @@ class Secretary(Notification):
             None
         """
         appointments = self.clinic.view_appointments()
-        # if appointments:
-        #     self.make_table_clinic(clinic=self.clinic, clinic_appointment=appointments)
+        if appointments:
+            self.make_table_clinic(clinic=self.clinic, clinic_appointment=appointments)
         if appointments:
             return appointments
         else:

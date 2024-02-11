@@ -227,9 +227,8 @@ def doctor_page(request):
                                        "doctor_first_name": doctor_first_name,
                                        "doctor_last_name": doctor_last_name})
 
-
                 except:
-                    error_message = "Invalid date or time. Try again!"
+                    error_message = "Invalid date or time."
                     return render(request, 'doctor_page.html',
                                   {'error_message': error_message, 'phone_number': phone_number,
                                    "doctor_phone_number": doctor_phone_number, "doctor_first_name": doctor_first_name,
